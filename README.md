@@ -14,6 +14,14 @@ Open-source models that run on the phone, no AI company involved:
 - **Brain AI** uses [Transformers.js](https://github.com/huggingface/transformers.js) with `Xenova/multilingual-e5-small` (Thai, English, French, Arabic) or `Xenova/all-MiniLM-L6-v2` (English) for search by meaning, similar notes, auto-organizing the inbox, summaries and semantic links in the Brain map. Text from photos uses [Tesseract.js](https://github.com/naptha/tesseract.js). Models download once and then work offline.
 - **Imagine** creates images with the open [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) model through Hugging Face, using a free Hugging Face key, or the free public FLUX Space when it has free time left.
 
+## Jarvis voice assistant
+
+Home → **Jarvis** (or Discover). Talk to your second brain: "add a task to call the customer tomorrow", "what's due today?", "search my notes for solar", "add to my journal…", "remember that…". It also checks the weather, searches the web, opens apps on the phone, sets reminders and runs your Make.com automations.
+
+- Listening: Groq Whisper; answers: the best free Groq model (auto). Add a free key from https://console.groq.com/keys in Jarvis → ⚙️. The key stays on the phone and is never synced or backed up.
+- What Jarvis remembers is kept in the note **🧠 Jarvis memory** (Areas), so it syncs like any note.
+- The Android app needs version 1.4.0 or newer for the microphone and spoken replies.
+
 ## Converter
 
 The Convert tool (Home → Convert, or Discover) changes files on the device: images (JPG, PNG, WEBP, PDF), PDF (JPG, PNG, TXT), video and audio via ffmpeg.wasm (MP4, MP3, GIF, WEBM, M4A, WAV, OGG), spreadsheets via SheetJS, Word via mammoth. The donut format picker is inspired by [Filee](https://github.com/KnifeLemon/Filee) (MIT, © Myeonggu Kim). The desktop version is [Second Brain Convert](https://github.com/khalil203/second-brain-convert).
