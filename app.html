@@ -413,6 +413,42 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 .img-out figcaption{font-size:11.5px;color:var(--faint);padding:8px 12px;font-weight:650}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;cursor:pointer;background:var(--line)}
+
+/* ---------- Jarvis ---------- */
+#jarvis .jv-wrap{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:720px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 58px) 16px calc(env(safe-area-inset-bottom) + 12px)}
+.jv-stage{position:relative;height:min(36vh,300px);display:grid;place-items:center;flex:none}
+#jvOrb{width:min(70vw,280px);height:min(70vw,280px);cursor:pointer}
+.jv-state{position:absolute;bottom:0;left:0;right:0;text-align:center}
+.jv-state b{display:block;font-size:17px}.jv-state span{font-size:13px;color:var(--mut)}
+.jv-log{flex:1;min-height:120px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:12px;margin-top:8px;border-radius:22px;background:var(--card);border:1px solid var(--line)}
+.jvm{max-width:86%;padding:9px 13px;border-radius:18px;font-size:15px;line-height:1.5;white-space:pre-wrap;animation:fade .25s var(--ease)}
+.jv-me{align-self:flex-end;background:var(--acc);color:var(--accInk);border-bottom-right-radius:6px}
+.jv-ai{align-self:flex-start;background:var(--solid);border:1px solid var(--line);border-bottom-left-radius:6px}
+.jv-tool{align-self:flex-start;font-size:12px;color:var(--acc);border:1px dashed var(--acc);padding:4px 10px;border-radius:10px;opacity:.9}
+.jv-t{display:block;font-size:10px;opacity:.55;margin-top:2px}
+.jv-note{align-self:flex-start;cursor:pointer;background:var(--gradSoft);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:60%}
+.jv-note small{font-size:11px;color:var(--mut);font-weight:650}.jv-note b{font-size:14.5px}.jv-note span{font-size:12px;color:var(--acc)}
+.jv-act button{display:block;width:100%;margin-top:8px;padding:11px;border:0;border-radius:12px;background:var(--acc);color:var(--accInk);font:700 14px var(--font)}
+.jv-empty{margin:auto;text-align:center;color:var(--mut);font-size:14px;line-height:1.6}
+.jv-dots{display:inline-flex;gap:4px}.jv-dots i{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:jvbl 1s infinite}
+.jv-dots i:nth-child(2){animation-delay:.15s}.jv-dots i:nth-child(3){animation-delay:.3s}
+@keyframes jvbl{0%,100%{opacity:.25}50%{opacity:1}}
+.jv-quick{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none;flex:none}.jv-quick::-webkit-scrollbar{display:none}
+.jv-text{display:flex;gap:8px;padding-top:8px;flex:none}.jv-text input{flex:1;font-size:16px}
+.jv-text button{border:0;border-radius:14px;background:var(--acc);color:var(--accInk);width:50px;font-size:18px}
+.jv-ctl{display:flex;justify-content:center;align-items:center;gap:20px;padding:12px 0 4px;flex:none}
+.jv-b{width:56px;height:56px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:21px;display:grid;place-items:center;cursor:pointer}
+.jv-main{width:76px;height:76px;border:0;font-size:30px;background:var(--grad);color:#fff;box-shadow:var(--glow)}
+.jv-main.on{background:linear-gradient(135deg,#ef4444,#b91c1c);font-size:24px}
+.jv-set{position:absolute;inset:0;z-index:3;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .35s var(--ease);padding:calc(env(safe-area-inset-top) + 60px) 18px 40px}
+#jarvis .sh-top{z-index:4}
+.jv-set.open{transform:none}.jv-set-in{max-width:620px;margin:0 auto}
+.jv-set h3{margin:22px 0 6px;font-size:15px;color:var(--acc)}.jv-set label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin:14px 0 6px;font-weight:650}
+.jv-set input:not([type=checkbox]):not([type=range]),.jv-set select,.jv-set textarea{width:100%}.jv-set input[type=range]{width:100%}
+.jv-set .jv-sw{justify-content:flex-start;gap:10px;color:var(--ink);font-size:14px;align-items:center}
+.jv-set textarea{font-size:13px;min-height:90px}
+.jv-entry{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;font:inherit;color:var(--ink);padding:14px 16px;border-radius:22px;margin-top:10px}
+.jv-entry b{display:block;font-size:16px}.jv-entry small{color:var(--mut);font-size:12.5px}
 </style>
 </head>
 <body>
@@ -505,11 +541,23 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
   <div class="sh-body" id="convBody"></div>
   <input type="file" id="convPick" multiple hidden>
 </div>
+<!-- jarvis -->
+<div class="sheet" id="jarvis">
+  <div class="sh-top"><button class="ib flat" data-act="closeJarvis" aria-label="Back">←</button><b style="flex:1;text-align:center">Jarvis</b><button class="ib flat" id="jvSetBtn" aria-label="Jarvis settings">⚙️</button></div>
+  <div class="jv-wrap">
+    <div class="jv-stage"><canvas id="jvOrb" aria-label="Jarvis"></canvas><div class="jv-state"><b id="jvTitle">Ready</b><span id="jvSub"></span></div></div>
+    <div class="jv-log" id="jvLog"></div>
+    <div class="jv-quick" id="jvQuick"></div>
+    <form class="jv-text hide" id="jvForm"><input id="jvInput" placeholder="Type to Jarvis…" autocomplete="off"><button type="submit" aria-label="Send">➤</button></form>
+    <div class="jv-ctl"><button class="jv-b" id="jvKb" aria-label="Keyboard">⌨️</button><button class="jv-b hide" id="jvMute" aria-label="Mute">🔈</button><button class="jv-b jv-main" id="jvMain" aria-label="Talk">🎙️</button><button class="jv-b" id="jvSpk" aria-label="Speaker">🔊</button></div>
+  </div>
+  <div class="jv-set" id="jvSet"></div>
+</div>
 <input type="file" id="importFile" accept=".json,application/json" hidden>
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.1.0';
+const APP_VERSION = '5.2.0';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -987,6 +1035,7 @@ function renderHome(){
   else h += `<div class="focus glass"><span class="lbl">⚡ Focus now</span><h3>All clear. Capture a new idea?</h3><div class="row"><button class="btn grad sm" data-act="capture">＋ Capture</button></div></div>`;
   const wk = weekCounts(), max = Math.max(1, ...wk.map(d => d.n)), st = streak(), total = wk.reduce((a,d)=>a+d.n,0);
   h += `<div class="insight glass"><div class="streak">${st?'<i>🔥</i>':''}<b data-count="${st}">${st}</b><span>day streak</span></div><div><div class="week">${wk.map((d,i)=>`<div><i class="${d.n?'on':''} ${i===6?'today':''}" style="height:${Math.max(8, d.n/max*64)}px;--i:${i}"></i><span>${esc(d.l)}</span></div>`).join('')}</div><small>${total} note${total===1?'':'s'} touched this week</small></div></div>`;
+  h += `<button class="jv-entry glass" data-act="jarvis"><span class="orb-ai"><i></i></span><span style="flex:1"><b>Jarvis</b><small>Talk to your second brain: notes, tasks, journal, web &amp; automations</small></span><span class="cc-go">›</span></button>`;
   h += `<div class="qa"><button data-act="today"><i>📔</i>Journal</button><button data-act="newTask"><i>✅</i>Task</button><button data-act="aiOpen"><i>✨</i>Ask AI</button><button data-act="imagine"><i>🎨</i>Imagine</button><button data-act="openMap"><i>🧠</i>Brain map</button><button data-act="convert"><i>⇄</i>Convert</button></div>`;
   h += `<div class="sec"><h2>Today</h2><a data-go="tasks">All tasks</a></div>` + (todo.length ? list(todo) : `<div class="panel mut" style="text-align:center">✨ Nothing due. Tap ＋ to add a task.</div>`);
   const rs = resurfaceNote();
@@ -1041,6 +1090,7 @@ function renderTasks(){
 function renderDiscover(){
   let h = topbar('Discover', navigator.onLine ? 'Live information from the internet' : '⚠️ Offline — showing saved information', meBtn());
   h += `<button class="panel conv-card" data-act="aiOpen"><span class="cc-i">✨</span><span><b>Brain AI</b><small>Ask by meaning, auto-organize, read text from photos</small></span><span class="cc-go">›</span></button>`;
+  h += `<button class="panel conv-card" data-act="jarvis"><span class="cc-i">🎙️</span><span><b>Jarvis</b><small>Voice assistant for your second brain</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="imagine"><span class="cc-i">🎨</span><span><b>Imagine</b><small>Create images from text with open models</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="convert"><span class="cc-i">⇄</span><span><b>File converter</b><small>Photos, PDF, video, music, Word, Excel — on your phone</small></span><span class="cc-go">›</span></button>`;
   h += `<form class="search" id="wikiForm"><input id="wikiQ" type="search" placeholder="Search Wikipedia…" value="${esc(ui.wikiQ)}" autocomplete="off" enterkeyhint="search"></form>`;
@@ -1187,11 +1237,12 @@ function onClosed(id){
   if(!document.querySelector('.sheet.open')) document.body.classList.remove('sheet-open');
   if(id==='editor') finishEditor();
   if(id==='capSheet'){ ui.capFiles = []; }
+  if(id==='jarvis') Jarvis.stop();
   if(id!=='map' && $('#map').classList.contains('open')){ BrainMap.build(); BrainMap.paintUI(); }
   render();
 }
-addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
-function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me'].find(id => $('#'+id).classList.contains('open')); }
+addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me','jarvis'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
+function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me','jarvis'].find(id => $('#'+id).classList.contains('open')); }
 
 function actions(title, items){
   $('#actTitle').textContent = title;
@@ -1346,6 +1397,8 @@ async function act(a, el){
   else if(a==='aiOff'){ if(confirm('Turn off Brain AI and remove its models from this phone?')){ db.settings.ai.model = ''; AI.ex = null; EMB = {}; saveEmb(); save(); try{ for(const k of await caches.keys()) if(/transformers/i.test(k)) await caches.delete(k); }catch(e){} aiResults = null; renderAI(); toast('Brain AI turned off'); } }
   else if(a==='aiOrganize') aiOrganize();
   else if(a==='aiOcr') $('#aiOcrPick').click();
+  else if(a==='jarvis'){ haptic('medium'); Jarvis.open(); }
+  else if(a==='closeJarvis') closeSheet('jarvis');
   else if(a==='imagine'){ renderImagine(); openSheet('imagine'); }
   else if(a==='closeImg') closeSheet('imagine');
   else if(a==='imgGo') generateImage();
@@ -2237,6 +2290,448 @@ async function imgSave(){
   try{ n.files.push(await addFile(new File([L.blob], 'image-' + Date.now() + '.jpg', {type:L.blob.type || 'image/jpeg'}))); }catch(e){ toast(e.message); }
   changed(n); haptic('success'); toast('Saved to Resources', 'Open', () => openNote(n.id)); renderImagine();
 }
+
+/* ================= Jarvis voice assistant ================= */
+const Jarvis = (() => {
+  const GROQ = 'https://api.groq.com/openai/v1/';
+  const DEF = {key:'', model:'auto', lang:'en-US', rate:1.05, sil:.7, sens:5, voice:'', hooks:'', confirm:true, barge:false, stt:'fast'};
+  let C = Object.assign({}, DEF, (() => { try{ return JSON.parse(localStorage.getItem('sb.jarvis') || '{}'); }catch(e){ return {}; } })());
+  const saveC = () => { try{ localStorage.setItem('sb.jarvis', JSON.stringify(C)); }catch(e){} };
+  const S = {on:false, muted:false, busy:false, mode:'idle', energy:0, mic:0, hist:[], liveModel:null, speaker:true, raf:0, timers:[]};
+  const L = () => C.lang.split('-')[0];
+  const J = id => document.getElementById(id);
+  const enc = encodeURIComponent;
+  const MEM_TITLE = '🧠 Jarvis memory';
+
+  /* ---------- UI ---------- */
+  function setMode(m, title, sub){ S.mode = m; const t = J('jvTitle'), s = J('jvSub'); if(t) t.textContent = title; if(s) s.textContent = sub || ''; }
+  const timeStr = () => new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  function add(text, who){
+    const log = J('jvLog'); const e = log.querySelector('.jv-empty'); if(e) e.remove();
+    const d = document.createElement('div'); d.className = 'jvm jv-' + who; d.textContent = text;
+    if(who==='me' || who==='ai'){ const t = document.createElement('span'); t.className = 'jv-t'; t.textContent = timeStr(); d.appendChild(t); }
+    log.appendChild(d); log.scrollTop = 1e9; return d;
+  }
+  function addNoteCard(n, label){
+    const log = J('jvLog'), t = TYPE[n.type] || TYPE.note;
+    const d = document.createElement('div'); d.className = 'jvm jv-note'; d.dataset.open = n.id;
+    d.innerHTML = `<small>${esc(label || (t.i + ' ' + t.l))}</small><b>${esc(n.title || 'Untitled')}</b>${n.due ? `<span>${esc(dueLabel(n.due))}</span>` : ''}`;
+    log.appendChild(d); log.scrollTop = 1e9;
+  }
+  function addLinkCard(label, url){
+    const d = add(label, 'ai jv-act'); const b = document.createElement('button'); b.textContent = 'Tap to open';
+    b.onclick = () => go(url); d.appendChild(b); J('jvLog').scrollTop = 1e9;
+  }
+  function go(url){ if(/^https?:/.test(url)) openExternal(url); else location.href = url; }
+  let typing = null;
+  function showTyping(on){
+    if(on && !typing){ typing = document.createElement('div'); typing.className = 'jvm jv-ai'; typing.innerHTML = '<span class="jv-dots"><i></i><i></i><i></i></span>'; J('jvLog').appendChild(typing); J('jvLog').scrollTop = 1e9; }
+    if(!on && typing){ typing.remove(); typing = null; }
+  }
+  function renderLog(){
+    const log = J('jvLog'); log.innerHTML = '';
+    if(!S.hist.length){ log.innerHTML = `<div class="jv-empty">🤖 Hello ${esc(userName())}, I'm Jarvis.<br>I can read and write your notes, tasks and journal,<br>search the web, check the weather, open apps<br>and run your Make.com automations.<br><br>Tap 🎙️ to talk or ⌨️ to type.</div>`; return; }
+    S.hist.slice(-20).forEach(m => add(m.content, m.role==='user' ? 'me' : 'ai'));
+  }
+  const QUICK = ['What is due today?', 'Add a task', 'Search my notes for', 'Add to my journal', 'Weather today?', 'Latest solar news'];
+  function renderQuick(){
+    const q = J('jvQuick'); q.innerHTML = '';
+    QUICK.forEach(s => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = s;
+      b.onclick = () => { if(/^(Add a task|Search my notes for|Add to my journal)$/.test(s)){ J('jvForm').classList.remove('hide'); J('jvInput').value = s + ' '; J('jvInput').focus(); } else ask(s); };
+      q.appendChild(b); });
+  }
+  const userName = () => (db.settings.jarvisName || 'Linko');
+
+  /* ---------- orb ---------- */
+  function orbLoop(){
+    const c = J('jvOrb'); if(!c) return; const x = c.getContext('2d'); let t = 0;
+    const col = {idle:['#22D3EE','#2563EB'], listening:['#22D3EE','#2563EB'], hearing:['#7CF7FF','#22D3EE'], stt:['#FF9F1C','#22D3EE'], thinking:['#FF9F1C','#FF5E00'], speaking:['#2EE6B6','#22D3EE']};
+    const f = () => {
+      if(!J('jarvis').classList.contains('open')){ S.raf = 0; return; }
+      const w = c.clientWidth * devicePixelRatio; if(c.width !== w){ c.width = c.height = w; }
+      t += .016; const s = c.width, cx = s/2, cy = s/2, R = s*.25, m = S.mode;
+      const target = m==='speaking' ? .5 + Math.sin(t*9)*.25 + Math.sin(t*23)*.12 : (m==='listening'||m==='hearing') ? .12 + S.mic*2.2 : (m==='thinking'||m==='stt') ? .3 : .06;
+      S.energy += (Math.min(1.2, target) - S.energy) * .15; const E = S.energy;
+      x.clearRect(0,0,s,s); const [c1,c2] = col[m] || col.idle;
+      const gl = x.createRadialGradient(cx,cy,R*.3,cx,cy,R*2); gl.addColorStop(0,c1+'55'); gl.addColorStop(1,'transparent'); x.fillStyle = gl; x.fillRect(0,0,s,s);
+      x.lineCap = 'round';
+      for(let k=0;k<4;k++){ const rr = R*(1.25+k*.13), sp = (k%2?-1:1)*(.4+k*.25)*(1+E), seg = 3+k; x.lineWidth = s*(.006-k*.001); x.strokeStyle = (k%2?c2:c1) + ['ee','aa','77','44'][k];
+        for(let j=0;j<seg;j++){ const a0 = t*sp + j*Math.PI*2/seg; x.beginPath(); x.arc(cx,cy,rr+Math.sin(t*3+k)*E*R*.05,a0,a0+Math.PI*2/seg*.55); x.stroke(); } }
+      x.strokeStyle = c1+'66'; x.lineWidth = s*.003;
+      for(let i=0;i<60;i++){ const a = i/60*Math.PI*2 + t*.1, r1 = R*1.85, r2 = r1 + (i%5 ? s*.012 : s*.025)*(1+E); x.beginPath(); x.moveTo(cx+Math.cos(a)*r1, cy+Math.sin(a)*r1); x.lineTo(cx+Math.cos(a)*r2, cy+Math.sin(a)*r2); x.stroke(); }
+      const pr = R*(1+E*.15), g = x.createRadialGradient(cx-pr*.3,cy-pr*.35,pr*.08,cx,cy,pr);
+      g.addColorStop(0,'#ffffff'); g.addColorStop(.2,c1); g.addColorStop(.75,c2); g.addColorStop(1,'#001428'); x.beginPath(); x.arc(cx,cy,pr,0,7); x.fillStyle = g; x.fill();
+      x.save(); x.beginPath(); x.arc(cx,cy,pr,0,7); x.clip(); x.strokeStyle = '#ffffffaa'; x.lineWidth = s*.005; x.beginPath();
+      for(let i=0;i<=80;i++){ const px = cx-pr+i/80*pr*2, amp = pr*.35*E*Math.sin(i/80*Math.PI), py = cy + Math.sin(i*.45+t*12)*amp*Math.sin(t*5+i*.1); i ? x.lineTo(px,py) : x.moveTo(px,py); }
+      x.stroke(); x.restore();
+      S.raf = requestAnimationFrame(f);
+    };
+    if(!S.raf) S.raf = requestAnimationFrame(f);
+  }
+
+  /* ---------- speech out: native TTS in the Android app, browser voice elsewhere ---------- */
+  const nativeTTS = () => NATIVE() && window.Capacitor.Plugins && window.Capacitor.Plugins.TextToSpeech;
+  const pickVoice = () => { const vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices() : []; return vs.find(v => v.name===C.voice) || vs.find(v => v.lang===C.lang) || vs.find(v => v.lang && v.lang.startsWith(L())) || null; };
+  function sayOne(text){
+    const T = nativeTTS();
+    if(T) return T.speak({text, lang:C.lang, rate:C.rate, pitch:1, volume:1, category:'playback'}).catch(() => {});
+    return new Promise(res => {
+      if(!('speechSynthesis' in window)) return res();
+      const u = new SpeechSynthesisUtterance(text); u.lang = C.lang; u.rate = C.rate; const v = pickVoice(); if(v) u.voice = v;
+      u.onboundary = () => { S.energy = Math.min(1.2, S.energy + .35); }; u.onend = u.onerror = res; speechSynthesis.speak(u);
+    });
+  }
+  function stopTTS(){ const T = nativeTTS(); if(T) T.stop().catch(() => {}); try{ speechSynthesis.cancel(); }catch(e){} }
+  function splitSentences(t){ t = t.replace(/[*_#`>\[\]]/g, ''); const out = []; let m;
+    while((m = t.match(/^([\s\S]*?[.!?。\n])\s*/)) || (m = t.match(/^([\s\S]{40,}?)\s+/))){ out.push(m[1].trim()); t = t.slice(m[0].length); }
+    if(t.trim()) out.push(t.trim()); return out.filter(Boolean); }
+  async function speak(text){
+    if(!S.speaker || !text) return;
+    stopTTS(); setMode('speaking', 'Speaking', 'Tap the orb to interrupt');
+    for(const p of splitSentences(text)){ if(S.mode !== 'speaking') break; await sayOne(p); }
+  }
+  function interrupt(){ if(S.mode !== 'speaking') return; stopTTS(); S.mode = 'interrupted'; haptic('light'); }
+
+  /* ---------- mic, voice activity detection, Whisper ---------- */
+  let stream = null, actx = null, analyser = null, vadInt = null, rec = null, chunks = [], recStart = 0, speechOn = false, speechStartT = 0, lastVoice = 0, noise = .01, bargeT = 0;
+  const rms = b => { let s = 0; for(let i=0;i<b.length;i++) s += b[i]*b[i]; return Math.sqrt(s/b.length); };
+  const threshold = () => Math.max(.012, noise*(2 + (10-C.sens)*.45));
+  async function initMic(){
+    if(stream) return true;
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+      actx = new (window.AudioContext || window.webkitAudioContext)(); const src = actx.createMediaStreamSource(stream);
+      analyser = actx.createAnalyser(); analyser.fftSize = 1024; src.connect(analyser);
+      const buf = new Float32Array(analyser.fftSize); let sum = 0, n = 0; const t0 = Date.now();
+      while(Date.now() - t0 < 400){ await new Promise(r => setTimeout(r, 40)); analyser.getFloatTimeDomainData(buf); sum += rms(buf); n++; }
+      noise = Math.max(.004, sum/n); vadInt = setInterval(vad, 40); return true;
+    }catch(e){
+      add(NATIVE() ? '🎙️ Microphone not available. Update the Android app (Home → "New Android app" banner, or Account → Updates) and allow the microphone. You can type meanwhile.' : '🎙️ Microphone blocked. Allow it in the browser, or type meanwhile.', 'tool');
+      J('jvForm').classList.remove('hide'); return false;
+    }
+  }
+  function vad(){
+    if(!analyser) return; const buf = new Float32Array(analyser.fftSize); analyser.getFloatTimeDomainData(buf); const v = rms(buf);
+    S.mic = Math.min(.5, v*4); const th = threshold(), now = Date.now();
+    if(S.mode==='listening' || S.mode==='hearing'){
+      if(!speechOn && v < th*.8) noise = noise*.98 + v*.02;
+      if(v > th){ if(!speechOn){ speechOn = true; speechStartT = now; setMode('hearing', 'Hearing you…', ''); } lastVoice = now; }
+      if(speechOn && now - lastVoice > C.sil*1000) finish();
+      else if(!speechOn && rec && now - recStart > 9000) restartRec();
+    } else if(S.mode==='speaking' && C.barge){
+      if(v > th*3){ if(!bargeT) bargeT = now; if(now - bargeT > 280){ bargeT = 0; interrupt(); } } else bargeT = 0;
+    }
+  }
+  const pickMime = () => { for(const m of ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus']) if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; return ''; };
+  function startRec(){ chunks = []; speechOn = false; const mime = pickMime(); rec = new MediaRecorder(stream, mime ? {mimeType:mime} : undefined); rec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); }; rec.start(250); recStart = Date.now(); }
+  function stopRec(){ if(rec){ rec.onstop = null; try{ rec.stop(); }catch(e){} rec = null; } }
+  function restartRec(){ stopRec(); startRec(); }
+  async function listen(){
+    if(!S.on || S.busy) return;
+    if(S.muted){ setMode('idle', 'Muted', 'Tap 🎙️ to unmute'); return; }
+    if(!await initMic()){ setMode('idle', 'Type to Jarvis', ''); return; }
+    if(actx.state === 'suspended') try{ await actx.resume(); }catch(e){}
+    stopRec(); startRec(); haptic('light'); setMode('listening', 'Listening…', 'Go ahead, ' + userName());
+  }
+  function finish(){
+    const r = rec, dur = lastVoice - speechStartT; rec = null; speechOn = false; if(!r) return;
+    if(dur < 250){ try{ r.stop(); }catch(e){} listen(); return; }
+    setMode('stt', 'Transcribing…', '');
+    r.onstop = async () => {
+      const blob = new Blob(chunks, {type:r.mimeType || 'audio/webm'});
+      try{
+        const text = await transcribe(blob);
+        if(!text || junk(text, dur)){ if(text) toast('🎧 Heard: ' + text); listen(); return; }
+        ask(text);
+      }catch(e){ add('⚠️ ' + e.message, 'ai'); listen(); }
+    };
+    try{ r.stop(); }catch(e){}
+  }
+  const junk = (t, dur) => !t.trim() || (dur < 1200 && /^(thank you|thanks for watching|you|bye|\.+)[\s.!]*$/i.test(t.trim()));
+  async function whisper(blob, model){
+    const ext = (blob.type.match(/mp4|ogg|webm/) || ['webm'])[0], fd = new FormData();
+    fd.append('file', blob, 'speech.' + (ext==='mp4' ? 'm4a' : ext)); fd.append('model', model); fd.append('language', L());
+    fd.append('response_format', 'json'); fd.append('temperature', '0'); fd.append('prompt', `Hi Jarvis, this is ${userName()}. Second Brain, notes, tasks, journal, Solar Rooftop, BS VYNE, TikTok, Make.`);
+    const r = await fetch(GROQ + 'audio/transcriptions', {method:'POST', headers:{Authorization:'Bearer ' + C.key}, body:fd});
+    const j = await r.json().catch(() => ({})); if(!r.ok) throw new Error(j.error?.message || ('Whisper error ' + r.status)); return (j.text || '').trim();
+  }
+  async function transcribe(blob){
+    const ms = C.stt==='accurate' ? ['whisper-large-v3','whisper-large-v3-turbo'] : ['whisper-large-v3-turbo','whisper-large-v3'];
+    let err; for(const m of ms){ try{ return await whisper(blob, m); }catch(e){ err = e; } } throw err;
+  }
+
+  /* ---------- second brain helpers ---------- */
+  const folderOf = k => valid(String(k||'').toLowerCase(), PK, '');
+  const typeOf = k => valid(String(k||'').toLowerCase(), TK, '');
+  function findNote(a){ if(a.id){ const n = byId(a.id); if(n) return n; } const q = String(a.title || a.query || '').trim(); if(!q) return null;
+    return byTitle(q) || search(q, 1)[0] || null; }
+  function search(q, limit=6){
+    const words = q.toLowerCase().split(/\s+/).filter(w => w.length > 1); if(!words.length) return [];
+    return db.notes.map(n => { const ti = (n.title||'').toLowerCase(), bo = (n.body||'').toLowerCase(), tg = tagsOf(n);
+      let s = 0; words.forEach(w => { if(ti.includes(w)) s += 3; if(bo.includes(w)) s += 1; if(tg.includes(w.replace(/^#/,''))) s += 2; });
+      return {n, s: s + (n.para==='archive' ? -1 : 0)}; }).filter(x => x.s > 0).sort((a,b) => b.s - a.s || b.n.updated - a.n.updated).slice(0, limit).map(x => x.n);
+  }
+  const brief = n => ({id:n.id, title:n.title||'Untitled', type:n.type, folder:n.para, due:n.due||undefined, done:n.type==='task' ? !!n.done : undefined, tags:tagsOf(n).slice(0,5), updated:new Date(n.updated).toISOString().slice(0,10), snippet:(n.body||'').replace(/\s+/g,' ').slice(0,160)});
+  function memNote(create){ let n = byTitle(MEM_TITLE); if(!n && create) n = newNote({title:MEM_TITLE, type:'note', para:'areas', body:'Things Jarvis remembers about you.\n\n#jarvis'}); return n; }
+  function memLines(){ const n = memNote(false); return n ? (n.body||'').split('\n').filter(l => /^- /.test(l)).map(l => l.slice(2)) : []; }
+  function journalToday(){
+    let n = db.notes.find(x => x.type==='journal' && x.date===today());
+    if(!n) n = newNote({type:'journal', para:'areas', date:today(), title:'Journal · ' + new Date().toLocaleDateString(undefined,{weekday:'long', day:'numeric', month:'long'}), body:'## Wins\n- \n\n## Thoughts\n\n\n## Tomorrow\n- [ ] '});
+    return n;
+  }
+  function rerender(){ if(!document.querySelector('.sheet.open:not(#jarvis)')) render(); }
+
+  /* ---------- tools ---------- */
+  const parseHooks = () => C.hooks.split('\n').map(l => l.split('|').map(s => s.trim())).filter(p => p.length >= 2 && /^https?:\/\//.test(p[1])).map(p => ({name:p[0], url:p[1], desc:p[2]||''}));
+  function toolDefs(){
+    const F = (name, description, properties, required=[]) => ({type:'function', function:{name, description, parameters:{type:'object', properties, required}}});
+    const hooks = parseHooks(), d = [
+      F('search_notes', 'Search the Second Brain notes, tasks, ideas, links, people and journal by keywords', {query:{type:'string'}}, ['query']),
+      F('read_note', 'Read the full text of one note by id or title', {id:{type:'string'}, title:{type:'string'}}),
+      F('create_note', 'Create a note, task, idea, link, person or journal entry in the Second Brain', {title:{type:'string'}, body:{type:'string', description:'markdown text; use "- [ ] " for checklist items'}, type:{type:'string', enum:TK}, folder:{type:'string', enum:PK, description:'inbox (default), projects, areas, resources, archive'}, due:{type:'string', description:'YYYY-MM-DD, for tasks'}, tags:{type:'array', items:{type:'string'}}, pinned:{type:'boolean'}}, ['title']),
+      F('update_note', 'Change an existing note or task: mark a task done, set due date, move folder, rename, pin, or append text', {id:{type:'string'}, title:{type:'string', description:'title of the note to change (if no id)'}, append:{type:'string'}, done:{type:'boolean'}, due:{type:'string'}, folder:{type:'string', enum:PK}, new_title:{type:'string'}, pinned:{type:'boolean'}}),
+      F('list_tasks', 'List tasks from the Second Brain', {filter:{type:'string', enum:['today','overdue','upcoming','open','done_recently']}}, ['filter']),
+      F('add_to_journal', "Add text to today's journal entry", {text:{type:'string'}, section:{type:'string', enum:['Wins','Thoughts','Tomorrow']}}, ['text']),
+      F('remember', 'Save a long-term fact about the user, his people, business or preferences', {fact:{type:'string'}}, ['fact']),
+      F('forget', 'Delete remembered facts containing a keyword', {keyword:{type:'string'}}, ['keyword']),
+      F('open_on_phone', 'Open something on the phone: call, sms, line, whatsapp, maps, youtube, google, facebook, tiktok, email, url', {action:{type:'string', enum:['call','sms','line','whatsapp','maps','youtube','google','facebook','tiktok','email','url']}, target:{type:'string'}, text:{type:'string'}}, ['action','target']),
+      F('set_reminder', 'Remind the user after some minutes (Second Brain must stay open)', {minutes:{type:'number'}, text:{type:'string'}}, ['minutes','text']),
+      F('get_weather', 'Current weather and 3-day forecast for a city', {city:{type:'string'}}),
+      F('web_search', 'Search the internet for current information, news, prices or facts', {query:{type:'string'}}, ['query'])];
+    if(hooks.length) d.unshift({type:'function', function:{name:'run_automation', description:'Run one of the user\'s Make.com automations. Available: ' + hooks.map(h => `"${h.name}" (${h.desc})`).join('; '),
+      parameters:{type:'object', properties:{name:{type:'string', enum:hooks.map(h => h.name)}, data:{type:'object', description:'fields to send', additionalProperties:true}}, required:['name']}}});
+    return d;
+  }
+  const LABEL = {search_notes:'🔎 Searching your notes', read_note:'📖 Reading note', create_note:'📝 Saved to Second Brain', update_note:'✏️ Updated', list_tasks:'✅ Checking tasks', add_to_journal:'📔 Added to journal', remember:'🧠 Remembered', forget:'🧹 Forgot', open_on_phone:'📱 Opening', set_reminder:'⏰ Reminder set', get_weather:'🌤️ Checking weather', web_search:'🌐 Searching the web', run_automation:'⚙️ Running Make automation'};
+  async function run(name, a){
+    switch(name){
+      case 'search_notes': { const r = search(a.query || ''); r.slice(0,3).forEach(n => addNoteCard(n)); return JSON.stringify(r.map(brief)); }
+      case 'read_note': { const n = findNote(a); if(!n) return 'not found'; addNoteCard(n, '📖 Read'); return JSON.stringify({...brief(n), body:(n.body||'').slice(0,4000)}); }
+      case 'create_note': {
+        const type = typeOf(a.type) || (a.due ? 'task' : 'note');
+        const n = newNote({title:String(a.title||'').slice(0,200), body:withTags(a.body||'', a.tags||[]), type, para:folderOf(a.folder) || (type==='link' ? 'resources' : 'inbox'), due:/^\d{4}-\d{2}-\d{2}$/.test(a.due||'') ? a.due : '', pinned:!!a.pinned});
+        changed(n); addNoteCard(n, '📝 Saved · ' + (TYPE[n.type]||TYPE.note).l); rerender(); return 'created ' + JSON.stringify(brief(n));
+      }
+      case 'update_note': {
+        const n = findNote(a); if(!n) return 'note not found';
+        if(a.append) n.body = (n.body||'').trimEnd() + '\n\n' + a.append;
+        if(typeof a.done==='boolean'){ n.done = a.done; if(a.done) n.doneAt = Date.now(); }
+        if(a.due!==undefined) n.due = /^\d{4}-\d{2}-\d{2}$/.test(a.due) ? a.due : '';
+        if(folderOf(a.folder)) n.para = folderOf(a.folder);
+        if(a.new_title) n.title = a.new_title;
+        if(typeof a.pinned==='boolean') n.pinned = a.pinned;
+        changed(n); addNoteCard(n, '✏️ Updated'); rerender(); return 'updated ' + JSON.stringify(brief(n));
+      }
+      case 'list_tasks': {
+        const t = today(), T = live().filter(n => n.type==='task'); let r;
+        if(a.filter==='today') r = T.filter(n => !n.done && n.due && n.due <= t);
+        else if(a.filter==='overdue') r = T.filter(n => !n.done && n.due && n.due < t);
+        else if(a.filter==='upcoming') r = T.filter(n => !n.done && n.due > t).sort((x,y) => x.due < y.due ? -1 : 1);
+        else if(a.filter==='done_recently') r = T.filter(n => n.done).sort((x,y) => (y.doneAt||y.updated) - (x.doneAt||x.updated));
+        else r = T.filter(n => !n.done);
+        r = r.slice(0, 15); r.slice(0, 4).forEach(n => addNoteCard(n)); return JSON.stringify({count:r.length, tasks:r.map(brief)});
+      }
+      case 'add_to_journal': {
+        const n = journalToday(), sec = a.section || 'Thoughts', line = sec==='Thoughts' ? a.text : (sec==='Tomorrow' ? '- [ ] ' : '- ') + a.text;
+        const re = new RegExp('(## ' + sec + '\\n)'); n.body = re.test(n.body) ? n.body.replace(re, '$1' + line + '\n') : (n.body||'') + '\n\n## ' + sec + '\n' + line;
+        changed(n); addNoteCard(n, '📔 Journal'); rerender(); return 'added to journal';
+      }
+      case 'remember': { const n = memNote(true); n.body = (n.body||'').trimEnd() + '\n- ' + a.fact; changed(n); return 'remembered'; }
+      case 'forget': { const n = memNote(false); if(!n) return 'nothing remembered'; const k = (a.keyword||'').toLowerCase(), before = n.body;
+        n.body = n.body.split('\n').filter(l => !(/^- /.test(l) && l.toLowerCase().includes(k))).join('\n'); if(n.body !== before) changed(n); return 'done'; }
+      case 'open_on_phone': {
+        const t = a.target || '', tx = a.text || '', num = t.replace(/[^\d+]/g, '');
+        const M = {call:['tel:'+num, '📞 Call ' + t], sms:[`sms:${num}${tx ? '?body=' + enc(tx) : ''}`, '💬 SMS ' + t], line:[tx ? 'https://line.me/R/msg/text/?' + enc(tx) : 'https://line.me/R/', '🟢 LINE'],
+          whatsapp:[`https://wa.me/${num.replace('+','')}${tx ? '?text=' + enc(tx) : ''}`, '🟢 WhatsApp ' + t], maps:['https://www.google.com/maps/search/?api=1&query=' + enc(t), '🗺️ Map: ' + t],
+          youtube:['https://www.youtube.com/results?search_query=' + enc(t), '▶️ YouTube: ' + t], google:['https://www.google.com/search?q=' + enc(t), '🔎 Google: ' + t],
+          facebook:[/^https?:/.test(t) ? t : 'https://www.facebook.com/search/top?q=' + enc(t), '📘 Facebook'], tiktok:['https://www.tiktok.com/' + (t.startsWith('@') ? t : 'search?q=' + enc(t)), '🎵 TikTok'],
+          email:[`mailto:${t}${tx ? '?body=' + enc(tx) : ''}`, '✉️ Email ' + t], url:[/^https?:/.test(t) ? t : 'https://' + t, '🌐 ' + t]};
+        const [url, label] = M[a.action] || M.url; addLinkCard(label, url); try{ go(url); }catch(e){} return 'opened / showed a button for: ' + label;
+      }
+      case 'set_reminder': {
+        const at = Date.now() + Math.max(.1, +a.minutes || 1)*60000; const id = setTimeout(() => remind(a.text), at - Date.now()); S.timers.push(id);
+        try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+        return 'reminder set for ' + new Date(at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+      case 'get_weather': {
+        const city = a.city || db.settings.city || 'Bangkok';
+        const g = await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${enc(city)}&count=1&language=en`); const p = g.results && g.results[0]; if(!p) return 'city not found';
+        const w = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=auto&forecast_days=3`);
+        return JSON.stringify({place:p.name + ', ' + (p.country||''), current:w.current, daily:w.daily, note:'WMO weather_code: 0 clear, 1-3 cloudy, 45 fog, 51-67 rain, 80-82 showers, 95+ thunderstorm'});
+      }
+      case 'web_search': {
+        for(const m of ['groq/compound-mini', 'groq/compound']){
+          const r = await fetch(GROQ + 'chat/completions', {method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer ' + C.key}, body:JSON.stringify({model:m, messages:[{role:'user', content:a.query + ' (answer briefly with key facts and dates)'}]})});
+          if(r.ok){ const j = await r.json(); return (j.choices?.[0]?.message?.content || '').slice(0, 2500); }
+        }
+        return 'web search unavailable';
+      }
+      case 'run_automation': {
+        const h = parseHooks().find(x => x.name===a.name); if(!h) return 'automation not found';
+        const payload = {...(a.data||{}), _from:'Jarvis', _time:new Date().toISOString()};
+        try{ const r = await fetch(h.url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}); const t = await r.text(); return r.ok ? 'sent OK. Make replied: ' + t.slice(0,300) : 'failed ' + r.status; }
+        catch(e){ try{ await fetch(h.url, {method:'POST', mode:'no-cors', body:new URLSearchParams(Object.entries(payload).map(([k,v]) => [k, typeof v==='object' ? JSON.stringify(v) : String(v)]))}); return 'sent'; }catch(e2){ return 'failed: ' + e2.message; } }
+      }
+    }
+    return 'unknown tool';
+  }
+  async function remind(text){
+    haptic('success'); toast('⏰ ' + text);
+    try{ if(Notification.permission==='granted') new Notification('Jarvis ⏰', {body:text}); }catch(e){}
+    if(J('jarvis').classList.contains('open')){ add('⏰ Reminder: ' + text, 'ai'); if(!S.busy){ stopRec(); await speak(userName() + ', a reminder: ' + text); if(S.on) listen(); else setMode('idle', 'Ready', ''); } }
+  }
+
+  /* ---------- brain (Groq) ---------- */
+  const PREF = ['openai/gpt-oss-120b','moonshotai/kimi-k2-instruct-0905','moonshotai/kimi-k2-instruct','llama-3.3-70b-versatile','qwen/qwen3-32b','openai/gpt-oss-20b','meta-llama/llama-4-maverick-17b-128e-instruct','llama-3.1-8b-instant'];
+  async function model(force){
+    if(C.model && C.model!=='auto') return C.model; if(S.liveModel && !force) return S.liveModel;
+    const r = await fetch(GROQ + 'models', {headers:{Authorization:'Bearer ' + C.key}}); const j = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error(j.error?.message || ('Groq error ' + r.status));
+    const ids = (j.data||[]).filter(m => m.active!==false).map(m => m.id);
+    S.liveModel = PREF.find(p => ids.includes(p)) || ids.find(i => !/whisper|tts|guard|compound|playai|orpheus|prompt/i.test(i));
+    if(!S.liveModel) throw new Error('No chat model found on Groq'); return S.liveModel;
+  }
+  function system(){
+    const now = new Date().toLocaleString('en-GB', {dateStyle:'full', timeStyle:'short'}), t = today(), T = live().filter(n => n.type==='task' && !n.done);
+    const due = T.filter(n => n.due && n.due <= t).map(n => n.title + (n.due < t ? ' (overdue)' : '')).slice(0, 10);
+    let s = `You are JARVIS, the personal AI assistant of ${userName()}, built into his Second Brain app (his notes, tasks, ideas, people and journal, organised in folders: Inbox, Projects, Areas, Resources, Archive). ${userName()} is a Tunisian living in Thailand; he runs Solar Rooftop (solar installation), BS VYNE (marketing & design agency) and the Facebook page K. LINKO X / TikTok @k.linkox.
+Personality: smart, calm, polite, confident and a little witty, like Jarvis in the movies. Call him "${userName()}" (occasionally "sir").
+Rules:
+- This is a voice conversation: answer in 1-3 short natural sentences. No markdown, no symbols, no emoji, no IDs.
+- Speak English unless he clearly speaks another language.
+- Use tools to look up or change his Second Brain instead of guessing. Search before saying something isn't there. When he asks to note, save, add a task or remember something, do it with the tools, then confirm briefly.
+- Dates: today is ${t}. Convert "tomorrow", "Friday" etc. into YYYY-MM-DD for due dates.
+- If you need more information, ask one short question.`;
+    if(C.confirm) s += `\n- Before running a Make automation, contacting someone or a multi-step task, say briefly what you will do and ask "Shall I proceed?" Wait for his OK. Saving notes and tasks needs no confirmation.`;
+    s += `\n\nNow: ${now}. Second Brain: ${db.notes.length} notes, ${T.length} open tasks.`;
+    if(due.length) s += `\nDue today/overdue: ${due.join('; ')}.`;
+    const mem = memLines(); if(mem.length) s += `\n\nThings you remember about ${userName()}:\n- ` + mem.slice(-40).join('\n- ');
+    return s;
+  }
+  async function chat(messages, m, tools){
+    const body = {model:m, messages, temperature:.6, max_tokens:700};
+    if(tools){ body.tools = toolDefs(); body.tool_choice = 'auto'; }
+    if(/gpt-oss/.test(m)) body.reasoning_effort = 'low'; if(/qwen3/.test(m)) body.reasoning_effort = 'none';
+    const send = () => fetch(GROQ + 'chat/completions', {method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer ' + C.key}, body:JSON.stringify(body)});
+    let r = await send(); if(r.status===400 && body.reasoning_effort){ delete body.reasoning_effort; r = await send(); }
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok){ const e = new Error(j.error?.message || ('Groq error ' + r.status)); e.status = r.status; e.code = j.error?.code; throw e; }
+    return j.choices[0].message;
+  }
+  async function think(text){
+    S.hist.push({role:'user', content:text});
+    let m = await model();
+    const msgs = [{role:'system', content:system()}, ...S.hist.slice(-16)];
+    let reply = '';
+    for(let round=0; round<6; round++){
+      let r;
+      try{ r = await chat(msgs, m, round < 5); }
+      catch(e){
+        if(e.status===404 && C.model==='auto'){ m = await model(true); r = await chat(msgs, m, true); }
+        else if(e.code==='tool_use_failed' || e.status===400) r = await chat(msgs, m, false);
+        else { S.hist.pop(); throw e; }
+      }
+      if(r.tool_calls && r.tool_calls.length){
+        msgs.push({role:'assistant', content:r.content || '', tool_calls:r.tool_calls});
+        for(const tc of r.tool_calls){
+          let args = {}; try{ args = JSON.parse(tc.function.arguments || '{}'); }catch(e){}
+          const lbl = LABEL[tc.function.name] || '🛠 ' + tc.function.name; if(!/create_note|update_note|add_to_journal/.test(tc.function.name)) add(lbl + (args.query ? ' · ' + args.query : args.name ? ' · ' + args.name : args.city ? ' · ' + args.city : ''), 'tool');
+          let out; try{ out = await run(tc.function.name, args); }catch(e){ out = 'error: ' + e.message; }
+          msgs.push({role:'tool', tool_call_id:tc.id, content:String(out)});
+        }
+        continue;
+      }
+      reply = (r.content || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim(); break;
+    }
+    reply = reply || 'Done.'; S.hist.push({role:'assistant', content:reply}); S.hist = S.hist.slice(-30);
+    try{ sessionStorage.setItem('sb.jvhist', JSON.stringify(S.hist)); }catch(e){}
+    return reply;
+  }
+  async function ask(text){
+    text = (text||'').trim(); if(!text || S.busy) return;
+    if(!C.key){ showSettings(true); toast('Add your free Groq key first'); return; }
+    if(!navigator.onLine){ toast("Jarvis needs internet"); return; }
+    S.busy = true; stopRec(); interrupt(); add(text, 'me'); setMode('thinking', 'Thinking…', ''); showTyping(true);
+    try{ const reply = await think(text); showTyping(false); add(reply, 'ai'); await speak(reply); }
+    catch(e){ showTyping(false); add('⚠️ ' + e.message, 'ai'); if(S.on) await speak('Sorry, I could not connect.'); }
+    S.busy = false; if(S.on) listen(); else setMode('idle', 'Ready', 'Tap 🎙️ to talk');
+  }
+
+  /* ---------- session ---------- */
+  async function start(){
+    if(!C.key){ showSettings(true); return; }
+    S.on = true; S.muted = false; haptic('medium'); J('jvMain').classList.add('on'); J('jvMain').textContent = '■'; J('jvMute').classList.remove('hide');
+    const mic = initMic(); const hi = S.hist.length ? `Yes, ${userName()}?` : `Good to see you, ${userName()}. Jarvis is online.`;
+    add(hi, 'ai'); await speak(hi); await mic; listen();
+  }
+  function stop(){
+    S.on = false; S.busy = false; stopRec(); stopTTS(); showTyping(false);
+    if(stream){ stream.getTracks().forEach(t => t.stop()); stream = null; clearInterval(vadInt); try{ actx.close(); }catch(e){} actx = null; analyser = null; }
+    const b = J('jvMain'); if(b){ b.classList.remove('on'); b.textContent = '🎙️'; } const mu = J('jvMute'); if(mu) mu.classList.add('hide');
+    setMode('idle', 'Ready', 'Tap 🎙️ to talk');
+  }
+
+  /* ---------- settings ---------- */
+  function showSettings(open){
+    const p = J('jvSet'); if(!open){ p.classList.remove('open'); return; }
+    const vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices().filter(v => v.lang && v.lang.startsWith(L())) : [];
+    p.innerHTML = `<div class="jv-set-in">
+      <h3>⚙️ Jarvis settings</h3>
+      <label>Groq API key (free)</label><input id="jvKey" type="password" placeholder="gsk_…" value="${esc(C.key)}" autocomplete="off">
+      <p class="small">Get one free at <a data-ext="https://console.groq.com/keys">console.groq.com/keys</a> → Create API Key. Stays on this phone, never synced or backed up.</p>
+      <button class="btn g wide" id="jvTest">🔌 Test connection <span id="jvTestRes"></span></button>
+      <label>Your name</label><input id="jvName" value="${esc(userName())}">
+      <label>Language</label><select id="jvLang">${[['en-US','English'],['fr-FR','Français'],['ar-TN','العربية'],['th-TH','ไทย']].map(o => `<option value="${o[0]}" ${C.lang===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>
+      ${vs.length ? `<label>Voice</label><select id="jvVoice"><option value="">Automatic</option>${vs.map(v => `<option ${C.voice===v.name?'selected':''}>${esc(v.name)}</option>`).join('')}</select>` : ''}
+      <label>Speaking speed <b id="jvRateV">${C.rate.toFixed(2)}x</b></label><input id="jvRate" type="range" min="0.7" max="1.6" step="0.05" value="${C.rate}">
+      <label>Silence before sending <b id="jvSilV">${C.sil.toFixed(1)} s</b></label><input id="jvSil" type="range" min="0.3" max="2" step="0.1" value="${C.sil}">
+      <label>Mic sensitivity <b id="jvSensV">${C.sens}/10</b></label><input id="jvSens" type="range" min="1" max="10" step="1" value="${C.sens}">
+      <p class="small">Sends by itself because of background noise → lower it. Doesn't hear you → raise it.</p>
+      <label class="jv-sw"><input type="checkbox" id="jvConfirm" ${C.confirm?'checked':''}> Ask before automations and multi-step tasks</label>
+      <label class="jv-sw"><input type="checkbox" id="jvBarge" ${C.barge?'checked':''}> Let me interrupt by talking (best with earphones)</label>
+      <label class="jv-sw"><input type="checkbox" id="jvAcc" ${C.stt==='accurate'?'checked':''}> Accurate listening (slower, better for accents)</label>
+      <h3>🔗 Make.com automations</h3>
+      <p class="small">One per line: <b>name | webhook URL | what it does</b>. In Make, start a scenario with Webhooks › Custom webhook and paste its URL here.</p>
+      <textarea id="jvHooks" rows="4" placeholder="Send LINE to customer | https://hook.eu2.make.com/xxxx | Sends a LINE OA message, needs customer name and message">${esc(C.hooks)}</textarea>
+      <h3>🧠 Memory</h3><p class="small">Jarvis keeps what it remembers in the note "${MEM_TITLE}" (Areas), so it syncs with your Second Brain.</p>
+      <label>Chat model</label><input id="jvModel" value="${esc(C.model)}" placeholder="auto"><p class="small">auto picks the best free Groq model${S.liveModel ? ' (now: ' + esc(S.liveModel) + ')' : ''}.</p>
+      <div class="row" style="margin-top:14px"><button class="btn g" style="flex:1" id="jvClear">New conversation</button><button class="btn grad" style="flex:1" id="jvSave">Save</button></div></div>`;
+    p.classList.add('open');
+    const sl = (id, v, f) => J(id).oninput = () => J(v).textContent = f(+J(id).value);
+    sl('jvRate', 'jvRateV', x => x.toFixed(2) + 'x'); sl('jvSil', 'jvSilV', x => x.toFixed(1) + ' s'); sl('jvSens', 'jvSensV', x => x + '/10');
+    J('jvSave').onclick = () => {
+      Object.assign(C, {key:J('jvKey').value.trim(), lang:J('jvLang').value, rate:+J('jvRate').value, sil:+J('jvSil').value, sens:+J('jvSens').value, voice:J('jvVoice') ? J('jvVoice').value : C.voice,
+        confirm:J('jvConfirm').checked, barge:J('jvBarge').checked, stt:J('jvAcc').checked ? 'accurate' : 'fast', hooks:J('jvHooks').value.trim(), model:J('jvModel').value.trim() || 'auto'});
+      db.settings.jarvisName = J('jvName').value.trim() || 'Linko'; save(); S.liveModel = null; saveC(); p.classList.remove('open'); toast('Jarvis settings saved ✓');
+      setMode(S.on ? S.mode : 'idle', S.on ? J('jvTitle').textContent : 'Ready', S.on ? '' : 'Tap 🎙️ to talk');
+    };
+    J('jvClear').onclick = () => { S.hist = []; try{ sessionStorage.removeItem('sb.jvhist'); }catch(e){} renderLog(); p.classList.remove('open'); toast('New conversation'); };
+    J('jvTest').onclick = async () => {
+      const old = {key:C.key, model:C.model}; C.key = J('jvKey').value.trim(); C.model = J('jvModel').value.trim() || 'auto'; S.liveModel = null; J('jvTestRes').textContent = '…';
+      try{ const m = await model(true); await chat([{role:'user', content:'say OK'}], m, false); J('jvTestRes').textContent = '✅ ' + m.split('/').pop(); toast('Groq connected ✓'); }
+      catch(e){ J('jvTestRes').textContent = '❌'; toast('❌ ' + e.message.slice(0, 100)); C.key = old.key; C.model = old.model; }
+    };
+  }
+
+  /* ---------- open / wire up ---------- */
+  let wired = false;
+  function wire(){
+    if(wired) return; wired = true;
+    J('jvMain').onclick = () => S.on ? stop() : start();
+    J('jvMute').onclick = () => { S.muted = !S.muted; J('jvMute').textContent = S.muted ? '🔇' : '🔈'; if(S.muted){ stopRec(); setMode('idle', 'Muted', 'Tap 🔇 to unmute'); } else listen(); };
+    J('jvKb').onclick = () => { J('jvForm').classList.toggle('hide'); if(!J('jvForm').classList.contains('hide')) J('jvInput').focus(); };
+    J('jvSpk').onclick = () => { S.speaker = !S.speaker; J('jvSpk').textContent = S.speaker ? '🔊' : '🔇'; if(!S.speaker) interrupt(); toast(S.speaker ? 'Jarvis will speak' : 'Text replies only'); };
+    J('jvSetBtn').onclick = () => showSettings(!J('jvSet').classList.contains('open'));
+    J('jvOrb').onclick = () => { if(S.mode==='speaking') interrupt(); else if(!S.on) start(); };
+    J('jvForm').onsubmit = e => { e.preventDefault(); const v = J('jvInput').value; J('jvInput').value = ''; ask(v); };
+  }
+  function open(){
+    wire(); try{ S.hist = JSON.parse(sessionStorage.getItem('sb.jvhist') || '[]'); }catch(e){ S.hist = []; }
+    renderLog(); renderQuick(); openSheet('jarvis'); orbLoop();
+    if(!C.key){ setMode('idle', 'Set up Jarvis', 'Add a free Groq key in ⚙️'); showSettings(true); } else setMode('idle', 'Ready', 'Tap 🎙️ to talk');
+  }
+  return {open, stop, start, ask, get on(){ return S.on; }, _S:S, _C:C};
+})();
 
 /* ================= init ================= */
 $('#eType').innerHTML = TYPES.map(t => `<option value="${t[0]}">${t[2]} ${t[1]}</option>`).join('');
