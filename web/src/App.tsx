@@ -17,6 +17,8 @@ import Settings from './screens/Settings';
 import Capture from './screens/Capture';
 import Classic from './screens/Classic';
 import Welcome from './screens/Welcome';
+import Lock from './screens/Lock';
+import { lock } from './lib/biometric';
 import Forge from './screens/Forge';
 
 export interface Module { key: string; label: string; icon: LucideIcon; route?: Route; phase?: number }
@@ -120,6 +122,7 @@ export default function App() {
       {nav.overlay?.name === 'capture' && <Capture preset={nav.overlay.preset} />}
       {nav.overlay?.name === 'classic' && <Classic tool={nav.overlay.tool} />}
       {!Cloud.on() && !nx.welcomed && <Welcome />}
+      {lock.locked && Cloud.on() && <Lock />}
       <Toasts />
     </div>
   );

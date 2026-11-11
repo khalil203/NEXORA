@@ -72,10 +72,12 @@ jobs:
           npm init -y > /dev/null
           npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest @capacitor/filesystem@latest @capacitor/share@latest @capacitor/browser@latest @capacitor/haptics@latest
           npm install @capacitor-community/text-to-speech@latest --legacy-peer-deps || echo "::warning::Text-to-speech plugin not installed"
+          # Fingerprint / face unlock
+          npm install @capgo/capacitor-native-biometric@latest
           npx cap add android
           # Jarvis: microphone + text-to-speech
-          perl -0pi -e 's#<application#<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <queries><intent><action android:name="android.intent.action.TTS_SERVICE" /></intent></queries>\n\n    <application#' android/app/src/main/AndroidManifest.xml
-          grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml
+          perl -0pi -e 's#<application#<uses-permission android:name="android.permission.USE_BIOMETRIC" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <queries><intent><action android:name="android.intent.action.TTS_SERVICE" /></intent></queries>\n\n    <application#' android/app/src/main/AndroidManifest.xml
+          grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml && grep -q USE_BIOMETRIC android/app/src/main/AndroidManifest.xml
           npx --yes @capacitor/assets@latest generate --android \
             --iconBackgroundColor '#000211' --iconBackgroundColorDark '#000211' \
             --splashBackgroundColor '#000211' --splashBackgroundColorDark '#000211' \

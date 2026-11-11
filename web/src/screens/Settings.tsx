@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { RefreshCw, CloudUpload, LogOut, Download, ShieldCheck, Trash2, Activity, Smartphone, Sparkles, MonitorSmartphone, Share, Copy, CheckCircle2 } from 'lucide-react';
 import { canPrompt, promptInstall, device, DOWNLOAD_URL } from '../lib/install';
+import { Fingerprint, Lock as LockIcon } from 'lucide-react';
+import { bioInfo, enable as bioEnable, disable as bioDisable, lockNow, canSaveLogin, saveLogin, loginWithFingerprint, type BioInfo } from '../lib/biometric';
 import { useStore, db, nx, save, toast, today } from '../lib/store';
-import { Cloud, Profile, AI, displayUser } from '../lib/cloud';
+import { Cloud, Profile, AI, displayUser, loginEmail } from '../lib/cloud';
 import { APP_VERSION, APK_URL, checkUpdate, upd } from '../lib/update';
 import { ago } from '../lib/format';
 import { Page, Section, Toggle, Seg, Spinner, Sheet, Logo } from '../components/ui';
@@ -69,6 +71,8 @@ export default function Settings() {
       </div>
 
       <Section title="Account & sync">{u ? <Account /> : <SignIn />}</Section>
+
+      {u && <Section title="Fingerprint & security"><Security /></Section>}
 
       <Section title="AI & autonomy">
         <div className="card px-4 divide-y hair">
@@ -145,7 +149,7 @@ export function SignIn({ onDone, plain = false }: { onDone?: () => void; plain?:
   const [busy, setBusy] = useState(false); const [msg, setMsg] = useState('');
   async function signIn() {
     setBusy(true); setMsg('');
-    try { await Cloud.signIn(user, pw); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); onDone?.(); }
+    try { await Cloud.signIn(user, pw); if (canSaveLogin()) await saveLogin(user.trim(), pw).catch(() => null); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); onDone?.(); }
     catch (e) { setMsg((e as Error).message); }
     setBusy(false);
   }
@@ -156,6 +160,16 @@ export function SignIn({ onDone, plain = false }: { onDone?: () => void; plain?:
       <input className="input mt-2" type="password" placeholder="Password" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} required />
       {msg && <p className="text-[13px] mt-2 text-warn">{msg}</p>}
       <button className="btn-primary w-full mt-3" disabled={busy || !user.trim() || !pw}>{busy ? <Spinner /> : 'Sign in'}</button>
+      {nx.bio?.enabled && nx.bio.savedLogin && (
+        <button type="button" className="btn-soft w-full mt-2" disabled={busy} onClick={async () => {
+          setBusy(true); setMsg('');
+          let c: { username: string; password: string } | null = null;
+          try { c = await loginWithFingerprint(); } catch { setMsg('Fingerprint not recognized'); setBusy(false); return; }
+          try { if (!c) throw new Error('No saved sign-in yet. Sign in with your password once.'); await Cloud.signIn(c.username, c.password); toast('Signed in'); AI.loadStatus(); onDone?.(); }
+          catch (e) { setMsg((e as Error).message.startsWith('Wrong') ? 'Your password changed. Sign in with the new one once.' : (e as Error).message); }
+          setBusy(false);
+        }}><Fingerprint size={17} /> Sign in with fingerprint</button>
+      )}
       <p className="mt-3 text-[12px] text-muted">New accounts can't be created here. Sign in with your NEXORA account.</p>
     </form>
   );
@@ -181,6 +195,53 @@ function Devices() {
         <button className="btn-ghost btn-sm" onClick={() => { navigator.clipboard?.writeText(DOWNLOAD_URL); toast('Download link copied'); }}><Copy size={14} /> Copy link</button>
       </div>
       <p className="py-3 text-[12px] text-muted">Android, iPhone, iPad, Windows, Mac, Linux and the web. Sign in with the same account on each device to keep everything in sync.</p>
+    </div>
+  );
+}
+
+function Security() {
+  const [info, setInfo] = useState<BioInfo | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [pw, setPw] = useState('');
+  const [msg, setMsg] = useState('');
+  useEffect(() => { bioInfo().then(setInfo); }, []);
+  const on = !!nx.bio?.enabled;
+  const label = info?.label ?? 'fingerprint';
+  async function toggle(v: boolean) {
+    setBusy(true); setMsg('');
+    try { if (v) { await bioEnable(); toast(`${label[0].toUpperCase() + label.slice(1)} unlock is on`); } else { await bioDisable(); toast('Fingerprint unlock is off'); } }
+    catch (e) { setMsg((e as Error).message === 'Cancelled' || (e as Error).name === 'NotAllowedError' ? 'Cancelled.' : (e as Error).message || 'Could not turn it on.'); }
+    setBusy(false);
+  }
+  async function keepLogin(e: React.FormEvent) {
+    e.preventDefault(); setBusy(true); setMsg('');
+    const email = Cloud.user()!.email;
+    try { await Cloud.auth('token?grant_type=password', { email: loginEmail(email), password: pw }); await saveLogin(displayUser(email), pw); setPw(''); toast('You can now sign in with your fingerprint'); }
+    catch { setMsg('Wrong password'); }
+    setBusy(false);
+  }
+  if (!info) return <div className="card p-4"><Spinner /></div>;
+  return (
+    <div className="card px-4 divide-y hair">
+      {!info.ok && !on ? (
+        <div className="py-3 flex gap-3 text-[14px]"><Fingerprint size={18} className="text-muted shrink-0 mt-0.5" /><span className="text-muted">{info.reason}{/Android app/.test(info.reason ?? '') && <> <a className="text-primary" href={DOWNLOAD_URL} target="_blank" rel="noreferrer">Download page</a></>}</span></div>
+      ) : (
+        <>
+          <div className="flex items-center gap-3"><Fingerprint size={20} className="text-primary shrink-0" /><div className="flex-1"><Toggle label={`Unlock with ${label}`} hint={`NEXORA asks for your ${label} when it opens. Your password always works too.`} on={on} onChange={(v) => !busy && toggle(v)} /></div></div>
+          {on && (
+            <div className="py-3"><div className="text-[15px] font-medium mb-2">Lock again after the app was in the background for</div>
+              <Seg value={String(nx.bio!.lockAfter)} onChange={(v) => { nx.bio = { ...nx.bio!, lockAfter: Number(v) }; save(); }} options={[['0', 'Right away'], ['1', '1 min'], ['5', '5 min'], ['15', '15 min']]} /></div>
+          )}
+          {on && canSaveLogin() && (
+            nx.bio!.savedLogin
+              ? <div className="py-3 text-[14px] flex items-center gap-2"><CheckCircle2 size={16} className="text-ok" /> Fingerprint sign-in is ready, even after signing out.</div>
+              : <form className="py-3" onSubmit={keepLogin}><div className="text-[15px] font-medium">Sign in with your fingerprint too</div><div className="text-[13px] text-muted mb-2">Enter your password once. It is kept in the phone's secure keystore and only released by your fingerprint.</div>
+                  <div className="flex gap-2"><input type="password" className="input h-10 flex-1" placeholder="Password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" /><button className="btn-primary btn-sm h-10" disabled={!pw || busy}>Save</button></div></form>
+          )}
+          {on && <button className="py-3 w-full flex items-center gap-3 text-[15px]" onClick={lockNow}><LockIcon size={18} className="text-primary" /> Lock now</button>}
+        </>
+      )}
+      {msg && <p className="py-2 text-[13px] text-warn">{msg}</p>}
     </div>
   );
 }
