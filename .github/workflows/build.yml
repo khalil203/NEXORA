@@ -88,6 +88,8 @@ jobs:
         env:
           KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
+          # ignore spaces or line breaks picked up when the password was pasted into the secret
+          KS_PASS="$(printf '%s' "$KS_PASS" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"; export KS_PASS
           if [ -z "$KS_PASS" ]; then
             echo "::warning::Add the KEYSTORE_PASSWORD secret (Settings > Secrets and variables > Actions) to publish APKs from GitHub."
             echo "signed=false" >> "$GITHUB_OUTPUT"; exit 0
