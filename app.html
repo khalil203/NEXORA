@@ -533,7 +533,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="sheet" id="voice">
   <div class="sh-top"><button class="ib flat" data-act="closeVoice" aria-label="Back">←</button><b>My Voice</b><span style="width:42px"></span></div>
   <div class="sh-body" id="voiceBody"></div>
-  <input type="file" id="voicePick" accept="audio/*,video/*" hidden>
+  <input type="file" id="voicePick" hidden>
 </div>
 <!-- brain map -->
 <div class="sheet" id="map">
@@ -565,7 +565,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.3.1';
+const APP_VERSION = '5.3.2';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -2476,7 +2476,7 @@ const Voice = (() => {
   }
   async function setSample(blob, text){
     try{ const c = await clean(blob); await Store.putFile(sid(S.sl), c.blob); C[S.sl] = {text, sec:Math.round(c.sec*10)/10, at:Date.now()}; saveC(); haptic('success'); toast(LANG[S.sl] + ' voice sample saved'); }
-    catch(e){ toast(e.message); }
+    catch(e){ toast(e.message + (/read/i.test(e.message) ? '. Try an MP3, M4A or WAV file' : '')); }
     render();
   }
   function stopRec(){ if(S.rec && S.rec.state==='recording') S.rec.stop(); }
@@ -3005,7 +3005,8 @@ $('#ePara').innerHTML = PARA.map(p => `<option value="${p[0]}">${p[2]} ${p[1]}</
   if(AI.on()) setTimeout(() => AI.index().catch(()=>{}), 6000);
   loadWeather().then(() => { if(ui.tab==='home' || ui.tab==='discover') render(); });
   loadFX();
-  if(db.settings.autoUpdate && Date.now() - (db.settings.lastCheck||0) > 3*3600e3) setTimeout(() => checkUpdate(false), 3000);
+  if(db.settings.autoUpdate && Date.now() - (db.settings.lastCheck||0) > 15*60e3) setTimeout(() => checkUpdate(false), 3000);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible' && db.settings.autoUpdate && Date.now() - (db.settings.lastCheck||0) > 15*60e3) checkUpdate(false); });
 })();
 </script>
 </body>
