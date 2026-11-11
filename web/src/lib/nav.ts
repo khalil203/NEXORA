@@ -4,12 +4,12 @@ import { emit } from './store';
 export type Route =
   | { name: 'home' } | { name: 'brain'; conv?: string; ask?: string } | { name: 'tasks' } | { name: 'more' }
   | { name: 'inbox' } | { name: 'vault'; tag?: string; para?: string } | { name: 'note'; id: string; edit?: boolean }
-  | { name: 'memories'; focus?: string } | { name: 'settings' } | { name: 'account' };
+  | { name: 'memories'; focus?: string } | { name: 'settings' } | { name: 'account' } | { name: 'forge' };
 export type Overlay = null | { name: 'capture'; preset?: Record<string, unknown> } | { name: 'classic'; tool: string };
 
 export const nav = { stack: [{ name: 'home' }] as Route[], overlay: null as Overlay };
 export const route = () => nav.stack[nav.stack.length - 1];
-const TOP = new Set(['home', 'brain', 'tasks', 'more', 'inbox', 'vault', 'memories', 'settings']);
+const TOP = new Set(['home', 'brain', 'tasks', 'more', 'inbox', 'vault', 'memories', 'settings', 'forge']);
 
 export function go(r: Route) {
   if (TOP.has(r.name)) nav.stack = r.name === 'home' ? [r] : [{ name: 'home' }, r];

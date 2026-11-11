@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Home as HomeI, Brain, Plus, CheckSquare, LayoutGrid, Sparkles, Inbox as InboxI, Library, Network, CalendarCheck, FolderKanban, Briefcase, GraduationCap, Users, Calendar, Wallet, Workflow, LineChart, Settings as SettingsI, type LucideIcon } from 'lucide-react';
+import { Home as HomeI, Brain, Plus, CheckSquare, LayoutGrid, Sparkles, Inbox as InboxI, Library, Network, CalendarCheck, FolderKanban, Briefcase, GraduationCap, Users, Calendar, Wallet, Workflow, LineChart, Settings as SettingsI, WandSparkles, type LucideIcon } from 'lucide-react';
 import { useStore, nx, db, inboxNotes } from './lib/store';
 import { nav, route, go, openOverlay, type Route } from './lib/nav';
 import { Cloud } from './lib/cloud';
@@ -16,6 +16,7 @@ import Memories from './screens/Memories';
 import Settings from './screens/Settings';
 import Capture from './screens/Capture';
 import Classic from './screens/Classic';
+import Forge from './screens/Forge';
 
 export interface Module { key: string; label: string; icon: LucideIcon; route?: Route; phase?: number }
 export const MODULES: Module[] = [
@@ -25,6 +26,7 @@ export const MODULES: Module[] = [
   { key: 'inbox', label: 'Inbox', icon: InboxI, route: { name: 'inbox' } },
   { key: 'vault', label: 'Knowledge Vault', icon: Library, route: { name: 'vault' } },
   { key: 'tasks', label: 'Tasks', icon: CheckSquare, route: { name: 'tasks' } },
+  { key: 'forge', label: 'Prompt Forge', icon: WandSparkles, route: { name: 'forge' } },
   { key: 'graph', label: 'Knowledge Graph', icon: Network, phase: 5 },
   { key: 'life', label: 'Life Manager', icon: CalendarCheck, phase: 3 },
   { key: 'projects', label: 'Projects', icon: FolderKanban, phase: 3 },
@@ -63,6 +65,7 @@ export default function App() {
     case 'note': screen = <NoteScreen id={r.id} edit={r.edit} key={r.id} />; break;
     case 'memories': screen = <Memories focus={r.focus} />; break;
     case 'settings': case 'account': screen = <Settings />; break;
+    case 'forge': screen = <Forge />; break;
   }
 
   return (
