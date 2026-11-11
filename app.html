@@ -565,7 +565,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.3.3';
+const APP_VERSION = '5.3.4';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -2390,7 +2390,7 @@ const Voice = (() => {
       if(i===pl.audio) return file; if(i===pl.ref) return refText || ''; if(i===pl.gen) return genText;
       const k = ((p.parameter_name || '') + ' ' + (p.label || '')).toLowerCase(), def = p.parameter_has_default ? p.parameter_default : p.example_input;
       if(/speed|ความเร็ว/.test(k)) return o.speed; if(/nfe/.test(k)) return o.hq ? (typeof def==='number' ? def : 32) : 16;
-      if(/random/.test(k)) return true;
+      if(/random/.test(k) && /checkbox/i.test(p.component || '')) return true;
       if(/gender|เพศ/.test(k)){ const ch = (p.type && p.type.enum) || []; return ch.includes(o.gender) ? o.gender : (def ?? ch[0] ?? null); }
       return def ?? null;
     });
