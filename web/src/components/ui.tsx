@@ -1,18 +1,11 @@
-import { type ReactNode, useEffect, useId } from 'react';
+import { type ReactNode, useEffect } from 'react';
+import markUrl from '../assets/mark.png';
 import { X, ChevronLeft } from 'lucide-react';
 import { toasts, dismissToast, useStore } from '../lib/store';
 import { back } from '../lib/nav';
 
 export function Logo({ size = 28 }: { size?: number }) {
-  const gid = 'nxg' + useId().replace(/:/g, '');
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
-      <defs><linearGradient id={gid} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#648BFF" /><stop offset="1" stopColor="#927BFF" /></linearGradient></defs>
-      <rect x="2" y="2" width="44" height="44" rx="14" fill={`url(#${gid})`} />
-      <path d="M15 33V15l18 18V15" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="15" cy="15" r="2.6" fill="#fff" /><circle cx="33" cy="33" r="2.6" fill="#fff" />
-    </svg>
-  );
+  return <img src={markUrl} width={size} height={size} alt="NEXORA" className="shrink-0 select-none" style={{ borderRadius: size * 0.24 }} draggable={false} />;
 }
 export function Wordmark() {
   return <div className="flex items-center gap-2.5"><Logo /><span className="text-[17px] font-bold tracking-[0.18em]">NEXORA</span></div>;

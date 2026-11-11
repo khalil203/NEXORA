@@ -10,14 +10,14 @@
 <meta name="theme-color" content="#101626">
 <title>NEXORA</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
 <body style="margin:0;background:#101626">
 <script>
 /* Loader: runs the newest copy of the app — the one built into this install,
    or a newer one downloaded from GitHub by the in-app update button. */
-window.SB_SHELL = { apk: '1.5.0' };
+window.SB_SHELL = { apk: '1.6.0' };
 (function () {
   var ver = function (h) { return ((h || '').match(/APP_VERSION\s*=\s*'([\d.]+)'/) || [])[1] || '0'; };
   var newer = function (a, b) { a = String(a).split('.').map(Number); b = String(b).split('.').map(Number);

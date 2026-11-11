@@ -10,7 +10,7 @@ NEXORA is a personal AI operating system and second brain (formerly *Second Brai
 
 | Device | How |
 |---|---|
-| Android | [second-brain.apk](https://github.com/khalil203/NEXORA/raw/main/dist/second-brain.apk). Allow "Install unknown apps" when asked |
+| Android | [NEXORA.apk](https://github.com/khalil203/NEXORA/raw/main/dist/NEXORA.apk). Allow "Install unknown apps" when asked |
 | iPhone / iPad | Open https://khalil203.github.io/NEXORA/ in Safari → Share → **Add to Home Screen** |
 | Windows | [NEXORA-Setup.exe](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA-Setup.exe) (SmartScreen: More info → Run anyway) |
 | Mac | [NEXORA.dmg](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.dmg) (first open: right-click → Open) |

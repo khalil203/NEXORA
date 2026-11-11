@@ -5,7 +5,7 @@ declare const __APP_VERSION__: string;
 export const APP_VERSION = __APP_VERSION__;
 export const REPO = 'khalil203/NEXORA';
 export const RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
-export const APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
+export const APK_URL = `https://github.com/${REPO}/raw/main/dist/NEXORA.apk`;
 export const NATIVE = () => !!(window as any).Capacitor?.isNativePlatform?.();
 
 function updIDB(): Promise<IDBDatabase> {

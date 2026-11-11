@@ -107,17 +107,17 @@ jobs:
           fi
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
-          "$BT/apksigner" sign --ks signing/release.p12 --ks-type PKCS12 --ks-pass env:KS_PASS --key-pass env:KS_PASS --ks-key-alias secondbrain --out second-brain.apk aligned.apk
-          "$BT/apksigner" verify second-brain.apk
+          "$BT/apksigner" sign --ks signing/release.p12 --ks-type PKCS12 --ks-pass env:KS_PASS --key-pass env:KS_PASS --ks-key-alias secondbrain --out NEXORA.apk aligned.apk
+          "$BT/apksigner" verify NEXORA.apk
           echo "signed=true" >> "$GITHUB_OUTPUT"
 
       - name: Save APK in the repo (download link + in-app APK update)
         if: steps.sign.outputs.signed == 'true'
         run: |
-          mkdir -p dist && cp second-brain.apk dist/second-brain.apk
+          mkdir -p dist && cp NEXORA.apk dist/NEXORA.apk && git rm -q --ignore-unmatch dist/second-brain.apk
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/second-brain.apk
+          git add dist/NEXORA.apk
           git commit -m "Android APK ${{ env.APKV }} [skip ci]" && git push || echo "APK unchanged"
 
       - if: steps.sign.outputs.signed == 'true'
@@ -125,6 +125,6 @@ jobs:
         with:
           tag_name: apk-v${{ env.APKV }}
           name: NEXORA for Android ${{ env.APKV }}
-          body: Install second-brain.apk on your Android phone. After that, app updates arrive through the update button inside the app.
-          files: second-brain.apk
+          body: Install NEXORA.apk on your Android phone. After that, app updates arrive through the update button inside the app.
+          files: NEXORA.apk
           make_latest: true
