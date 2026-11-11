@@ -549,6 +549,11 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
   <div class="sh-body" id="convBody"></div>
   <input type="file" id="convPick" multiple hidden>
 </div>
+<!-- ad studio -->
+<div class="sheet" id="adstudio">
+  <div class="sh-top"><button class="ib flat" data-act="closeAdStudio" aria-label="Back">←</button><b style="flex:1;text-align:center">AD Studio</b><button class="ib flat" data-act="adStudioOut" aria-label="Open in browser">↗</button></div>
+  <iframe id="adFrame" title="AD Studio" allow="camera; microphone; clipboard-write; fullscreen; web-share" style="flex:1;width:100%;border:0;background:#0b0b12"></iframe>
+</div>
 <!-- jarvis -->
 <div class="sheet" id="jarvis">
   <div class="sh-top"><button class="ib flat" data-act="closeJarvis" aria-label="Back">←</button><b style="flex:1;text-align:center">Jarvis</b><button class="ib flat" id="jvSetBtn" aria-label="Jarvis settings">⚙️</button></div>
@@ -565,7 +570,8 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.3.4';
+const APP_VERSION = '5.4.0';
+const AD_STUDIO_URL = 'https://khalil203.github.io/second-brain/ad-studio/';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -1045,6 +1051,7 @@ function renderHome(){
   const wk = weekCounts(), max = Math.max(1, ...wk.map(d => d.n)), st = streak(), total = wk.reduce((a,d)=>a+d.n,0);
   h += `<div class="insight glass"><div class="streak">${st?'<i>🔥</i>':''}<b data-count="${st}">${st}</b><span>day streak</span></div><div><div class="week">${wk.map((d,i)=>`<div><i class="${d.n?'on':''} ${i===6?'today':''}" style="height:${Math.max(8, d.n/max*64)}px;--i:${i}"></i><span>${esc(d.l)}</span></div>`).join('')}</div><small>${total} note${total===1?'':'s'} touched this week</small></div></div>`;
   h += `<button class="jv-entry glass" data-act="jarvis"><span class="orb-ai"><i></i></span><span style="flex:1"><b>Jarvis</b><small>Talk to your second brain: notes, tasks, journal, web &amp; automations</small></span><span class="cc-go">›</span></button>`;
+  h += `<button class="jv-entry glass" data-act="adStudio"><span class="cc-i" style="font-size:26px">🎬</span><span style="flex:1"><b>AD Studio</b><small>Turn product photos into Thai ad videos</small></span><span class="cc-go">›</span></button>`;
   h += `<div class="qa"><button data-act="today"><i>📔</i>Journal</button><button data-act="newTask"><i>✅</i>Task</button><button data-act="aiOpen"><i>✨</i>Ask AI</button><button data-act="imagine"><i>🎨</i>Imagine</button><button data-act="openMap"><i>🧠</i>Brain map</button><button data-act="convert"><i>⇄</i>Convert</button></div>`;
   h += `<div class="sec"><h2>Today</h2><a data-go="tasks">All tasks</a></div>` + (todo.length ? list(todo) : `<div class="panel mut" style="text-align:center">✨ Nothing due. Tap ＋ to add a task.</div>`);
   const rs = resurfaceNote();
@@ -1102,6 +1109,7 @@ function renderDiscover(){
   h += `<button class="panel conv-card" data-act="jarvis"><span class="cc-i">🎙️</span><span><b>Jarvis</b><small>Voice assistant for your second brain</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="imagine"><span class="cc-i">🎨</span><span><b>Imagine</b><small>Create images from text with open models</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="voice"><span class="cc-i">🗣️</span><span><b>My Voice</b><small>Voice-overs in your own cloned voice, English and Thai</small></span><span class="cc-go">›</span></button>`;
+  h += `<button class="panel conv-card" data-act="adStudio"><span class="cc-i">🎬</span><span><b>AD Studio</b><small>Turn product photos into Thai ad videos</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="convert"><span class="cc-i">⇄</span><span><b>File converter</b><small>Photos, PDF, video, music, Word, Excel — on your phone</small></span><span class="cc-go">›</span></button>`;
   h += `<form class="search" id="wikiForm"><input id="wikiQ" type="search" placeholder="Search Wikipedia…" value="${esc(ui.wikiQ)}" autocomplete="off" enterkeyhint="search"></form>`;
   if(ui.wiki){
@@ -1253,8 +1261,8 @@ function onClosed(id){
   if(id!=='map' && $('#map').classList.contains('open')){ BrainMap.build(); BrainMap.paintUI(); }
   render();
 }
-addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
-function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis'].find(id => $('#'+id).classList.contains('open')); }
+addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis','adstudio'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
+function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis','adstudio'].find(id => $('#'+id).classList.contains('open')); }
 
 function actions(title, items){
   $('#actTitle').textContent = title;
@@ -1410,6 +1418,9 @@ async function act(a, el){
   else if(a==='aiOrganize') aiOrganize();
   else if(a==='aiOcr') $('#aiOcrPick').click();
   else if(a==='jarvis'){ haptic('medium'); Jarvis.open(); }
+  else if(a==='adStudio'){ haptic('medium'); const f = $('#adFrame'); if(!f.src) f.src = AD_STUDIO_URL; openSheet('adstudio'); }
+  else if(a==='closeAdStudio') onClosed('adstudio');
+  else if(a==='adStudioOut') window.open(AD_STUDIO_URL, '_blank');
   else if(a==='closeJarvis') closeSheet('jarvis');
   else if(a==='imagine'){ renderImagine(); openSheet('imagine'); }
   else if(a==='closeImg') closeSheet('imagine');

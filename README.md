@@ -1,6 +1,6 @@
 # Second Brain 🧠
 
-A personal second-brain app in the Neural Night design: notes, tasks with due dates, daily journal, tags, linked notes, a 3D Brain map of how your notes connect, focus card and streaks, photos and files, plus a Discover tab with weather, currency, news and Wikipedia search, and a file converter for photos, PDFs, video, music, Word and Excel files. Works offline, syncs to the cloud when you sign in, and backs up daily.
+A personal second-brain app in the Neural Night design: notes, tasks with due dates, daily journal, tags, linked notes, a 3D Brain map of how your notes connect, focus card and streaks, photos and files, AD Studio for Thai ad videos, plus a Discover tab with weather, currency, news and Wikipedia search, and a file converter for photos, PDFs, video, music, Word and Excel files. Works offline, syncs to the cloud when you sign in, and backs up daily.
 
 ## Install
 
@@ -13,6 +13,14 @@ Open-source models that run on the phone, no AI company involved:
 
 - **Brain AI** uses [Transformers.js](https://github.com/huggingface/transformers.js) with `Xenova/multilingual-e5-small` (Thai, English, French, Arabic) or `Xenova/all-MiniLM-L6-v2` (English) for search by meaning, similar notes, auto-organizing the inbox, summaries and semantic links in the Brain map. Text from photos uses [Tesseract.js](https://github.com/naptha/tesseract.js). Models download once and then work offline.
 - **Imagine** creates images with the open [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) model through Hugging Face, using a free Hugging Face key, or the free public FLUX Space when it has free time left.
+
+## AD Studio
+
+Home or Discover → **AD Studio**. Turns product photos into Thai advertising videos: product analysis, marketing strategy, storyboard, video, music, and MP4 export. It opens inside Second Brain, and ↗ opens it in the browser (best for saving videos on Android).
+
+- Source code: [`ad-studio/`](ad-studio) (React + Vite). GitHub Actions builds it and publishes it at https://khalil203.github.io/second-brain/ad-studio/ with every push.
+- Projects are stored on the device, the same as in the old AI AD STUDIO app, so existing projects are still there.
+- Server functions for the AI features are in [`ad-studio/supabase/functions`](ad-studio/supabase/functions).
 
 ## Jarvis voice assistant
 

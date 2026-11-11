@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; --app-font: 'IBM Plex Sans Thai'; }
+html, body, #root { height: 100%; }
+body {
+  @apply bg-ink-900 text-white antialiased;
+  font-family: var(--app-font), 'IBM Plex Sans Thai', 'Noto Sans Thai', system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+/* ambient background like the reference: soft sky/violet glow at the top */
+body::before {
+  content: ''; position: fixed; inset: -20% -20% auto -20%; height: 60vh; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 60% at 30% 20%, rgba(90,168,245,.16), transparent 70%),
+              radial-gradient(50% 50% at 80% 10%, rgba(139,124,246,.18), transparent 70%);
+}
+.thai-display { font-family: Prompt, Kanit, 'Noto Sans Thai', sans-serif; line-height: 1.35; }
+
+@layer components {
+  .glass { @apply bg-white/[0.06] backdrop-blur-xl border border-white/10; }
+  .card { @apply rounded-3xl bg-ink-800/90 border border-white/[0.07] shadow-card; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 h-12 font-semibold text-[15px] transition active:scale-[.97] disabled:opacity-40 disabled:pointer-events-none select-none; }
+  .btn-primary { @apply btn bg-accent text-white shadow-glow; }
+  .btn-glass { @apply btn glass text-white; }
+  .btn-ghost { @apply btn bg-transparent text-white/80 hover:bg-white/5; }
+  .btn-danger { @apply btn bg-red-500/15 text-red-300 border border-red-400/30; }
+  .icon-btn { @apply inline-flex items-center justify-center w-11 h-11 rounded-full glass active:scale-95 transition; }
+  .input { @apply w-full rounded-2xl bg-ink-700/80 border border-white/10 px-4 py-3 text-[15px] text-white placeholder:text-white/35 outline-none focus:border-violet-glow/70 focus:ring-2 focus:ring-violet-glow/25; }
+  .label { @apply block text-[13px] text-white/60 mb-1.5; }
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full px-3.5 h-9 text-[13px] border border-white/10 bg-white/[0.04] text-white/75 whitespace-nowrap transition active:scale-95; }
+  .chip-on { @apply bg-accent text-white border-transparent shadow-glow; }
+  .section-title { @apply text-[17px] font-semibold thai-display; }
+}
+
+input[type=range] { accent-color: #8b7cf6; width: 100%; height: 28px; }
+input[type=color] { -webkit-appearance: none; border: none; width: 40px; height: 40px; border-radius: 12px; padding: 0; background: none; }
+input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type=color]::-webkit-color-swatch { border: 2px solid rgba(255,255,255,.15); border-radius: 12px; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 12px); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+.animate-in { animation: fadeIn .35s ease both; }
+@keyframes shimmer { from { background-position: -200% 0 } to { background-position: 200% 0 } }
+.shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent); background-size: 200% 100%; animation: shimmer 1.6s infinite; }

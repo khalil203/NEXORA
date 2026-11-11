@@ -1,6 +1,6 @@
 node_modules/
 www/
 android/
-package.json
-package-lock.json
+/package.json
+/package-lock.json
 .DS_Store

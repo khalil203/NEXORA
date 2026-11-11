@@ -25,11 +25,22 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ad-studio/package-lock.json
+      - name: Build AD Studio
+        working-directory: ad-studio
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
       - name: Collect site files
         run: |
           mkdir site
           cp index.html app.html version.json manifest.webmanifest sw.js site/
           cp -r icons site/
+          cp -r ad-studio/dist site/ad-studio
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
