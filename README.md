@@ -60,4 +60,4 @@ Only when the Android shell itself changes (new plugins, icon, app name): raise 
 | `sw.js`, `manifest.webmanifest`, `icons/` | Offline support and install icons for the web app |
 | `capacitor.config.json`, `.github/workflows/build.yml` | Android APK build |
 
-The APK signing key is `signing/release.p12`, locked with a long random password. To let GitHub build APKs, add that password as the repository secret `KEYSTORE_PASSWORD` (Settings → Secrets and variables → Actions). Keep the password private and saved somewhere safe — without it, future APKs can't install over the old one.
+The APK signing key is `signing/release.p12` (new key since Android app 1.4.0, 11 Nov 2026; apps 1.3.0 and older must be uninstalled once before installing 1.4.0), locked with a long random password. To let GitHub build APKs, add that password as the repository secret `KEYSTORE_PASSWORD` (Settings → Secrets and variables → Actions). Keep the password private and saved somewhere safe — without it, future APKs can't install over the old one.
