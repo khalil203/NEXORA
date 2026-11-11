@@ -4,10 +4,20 @@
 
 NEXORA is a personal AI operating system and second brain (formerly *Second Brain*). Capture anything, and NEXORA organizes it, finds the tasks, dates and people in it, remembers what matters with your approval, and answers your questions from your own knowledge, with sources.
 
-## Install
+## Install — every device
 
-- **Android app:** download [second-brain.apk](https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk) and open it (allow "Install unknown apps" when asked). Phones already running Second Brain update to NEXORA by themselves; your notes stay.
-- **Web app:** open https://khalil203.github.io/second-brain/ in Chrome, then menu ⋮ → **Install app**.
+**One page for all devices:** https://khalil203.github.io/second-brain/download.html (it detects your device and has a QR code for phones).
+
+| Device | How |
+|---|---|
+| Android | [second-brain.apk](https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk). Allow "Install unknown apps" when asked |
+| iPhone / iPad | Open https://khalil203.github.io/second-brain/ in Safari → Share → **Add to Home Screen** |
+| Windows | [NEXORA-Setup.exe](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA-Setup.exe) (SmartScreen: More info → Run anyway) |
+| Mac | [NEXORA.dmg](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.dmg) (first open: right-click → Open) |
+| Linux | [NEXORA.AppImage](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.AppImage) or [NEXORA.deb](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.deb) |
+| Web | https://khalil203.github.io/second-brain/ (Chrome or Edge: Install in the address bar) |
+
+All versions run the same app and update themselves; sign in once on each device to sync. The desktop apps (`desktop/`, Electron) open the hosted app, so they only need rebuilding when `desktop/` changes. The **Desktop apps** workflow builds them and publishes them to the `desktop-latest` release.
 
 ## What's in 6.0 (Phase 1)
 
@@ -74,6 +84,8 @@ Only when the Android shell changes (plugins, icon, app name): raise `apk_versio
 | Path | What it is |
 |---|---|
 | `web/` | NEXORA source (React + TypeScript) |
+| `desktop/` | Windows / Mac / Linux app (Electron shell) |
+| `download.html` | Download page for every device |
 | `app.html` | Built app (generated — don't edit by hand) |
 | `classic.html` | The previous Second Brain 5.4 app, used by Classic tools |
 | `ad-studio/` | AD Studio source (built and published by GitHub Actions) |

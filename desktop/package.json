@@ -1,0 +1,99 @@
+{
+  "name": "nexora-desktop",
+  "productName": "NEXORA",
+  "version": "1.0.0",
+  "description": "NEXORA \u2014 Your Mind. Amplified.",
+  "author": "Linko <noreply@github.com>",
+  "homepage": "https://khalil203.github.io/second-brain/",
+  "main": "main.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --publish never"
+  },
+  "build": {
+    "appId": "com.khalil.secondbrain.desktop",
+    "productName": "NEXORA",
+    "files": [
+      "main.js",
+      "offline.html",
+      "build/icon.png"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "artifactName": "NEXORA-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "NEXORA"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "identity": "-",
+      "artifactName": "NEXORA.${ext}",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "NEXORA uses the microphone for voice notes and voice chat.",
+        "NSCameraUsageDescription": "NEXORA uses the camera to capture photos."
+      }
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Office",
+      "artifactName": "NEXORA.${ext}",
+      "maintainer": "Linko"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "khalil203",
+        "repo": "second-brain",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^45.3.0",
+    "electron-builder": "^26.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khalil203/second-brain.git"
+  }
+}

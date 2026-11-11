@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101626">
+<title>Get NEXORA — Your Mind. Amplified.</title>
+<meta name="description" content="Download NEXORA for Android, iPhone, iPad, Windows, Mac and Linux, or use it on the web.">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:title" content="NEXORA — Your Mind. Amplified.">
+<meta property="og:description" content="Your personal AI second brain. On every device.">
+<meta property="og:image" content="https://khalil203.github.io/second-brain/icons/icon-512.png">
+<style>
+  :root{--bg:#101626;--s:#171D2B;--r:#1F2638;--l:rgba(255,255,255,.07);--t:#fff;--m:#A7B0C2;--p:#648BFF;--v:#927BFF}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;color:var(--t);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1100px 600px at 85% -10%,rgba(146,123,255,.16),transparent 60%),radial-gradient(900px 500px at -10% 10%,rgba(100,139,255,.14),transparent 60%),var(--bg)}
+  a{color:inherit;text-decoration:none}
+  .w{max-width:980px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 20px 56px}
+  .brand{display:flex;align-items:center;gap:12px}.brand b{letter-spacing:.2em;font-size:17px}
+  .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:center;margin:40px 0 28px}
+  h1{font-size:clamp(32px,6vw,52px);line-height:1.05;margin:0;letter-spacing:-.02em}
+  .g{background:linear-gradient(135deg,var(--p),var(--v));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--m);font-size:17px;margin:14px 0 24px;max-width:520px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 24px;border-radius:14px;font-weight:650;font-size:16px;border:0;cursor:pointer;transition:transform .15s}
+  .btn:active{transform:scale(.98)}
+  .pri{color:#fff;background:linear-gradient(135deg,var(--p),var(--v));box-shadow:0 10px 30px -8px rgba(100,139,255,.6)}
+  .sec{background:var(--r);color:var(--t)}
+  .row{display:flex;flex-wrap:wrap;gap:10px}
+  .note{color:var(--m);font-size:13px;margin-top:10px}
+  .qr{justify-self:end;text-align:center;background:var(--s);border:1px solid var(--l);border-radius:24px;padding:18px}
+  .qr img{width:190px;height:190px;border-radius:12px;display:block;background:#fff}
+  .qr p{margin:10px 0 0;color:var(--m);font-size:13px}
+  h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin:36px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:var(--s);border:1px solid var(--l);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .card.on{border-color:rgba(100,139,255,.7);box-shadow:0 0 0 1px rgba(100,139,255,.4)}
+  .card .h{display:flex;align-items:center;gap:12px}.card .h b{font-size:16px}.card .h small{display:block;color:var(--m);font-size:12px}
+  .ic{width:42px;height:42px;border-radius:12px;background:rgba(100,139,255,.15);color:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .card .btn{height:44px;font-size:14px;width:100%}
+  .card ol{margin:0;padding-left:18px;color:var(--m);font-size:13px}.card ol li{margin:3px 0}
+  .card .links{display:flex;gap:8px}.card .links .btn{flex:1}
+  .you{font-size:11px;font-weight:700;color:var(--p);background:rgba(100,139,255,.15);border-radius:99px;padding:2px 8px;margin-left:auto}
+  footer{margin-top:40px;color:var(--m);font-size:13px;text-align:center}
+  @media(max-width:820px){.hero{grid-template-columns:1fr}.qr{display:none}.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="brand"><img src="icons/icon-192.png" width="36" height="36" alt=""><b>NEXORA</b></div>
+
+  <div class="hero">
+    <div>
+      <h1>Your Mind.<br><span class="g">Amplified.</span></h1>
+      <p class="lead">Your personal AI second brain. Capture anything, find anything, and remember what matters, on your phone, tablet and computer. Sign in once and everything stays in sync.</p>
+      <div class="row" id="main"></div>
+      <p class="note" id="mainNote"></p>
+    </div>
+    <div class="qr"><img src="icons/qr-download.svg" alt="QR code to this page"><p>Scan with your phone</p></div>
+  </div>
+
+  <h2>Every device</h2>
+  <div class="grid">
+    <div class="card" data-os="android">
+      <div class="h"><div class="ic">🤖</div><div><b>Android</b><small>Phone and tablet app</small></div></div>
+      <a class="btn pri" href="https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk">Download APK</a>
+      <ol><li>Open the downloaded file.</li><li>Allow "Install unknown apps" for your browser when asked.</li></ol>
+    </div>
+    <div class="card" data-os="ios">
+      <div class="h"><div class="ic">🍎</div><div><b>iPhone &amp; iPad</b><small>Installs from Safari</small></div></div>
+      <a class="btn pri" href="./">Open NEXORA in Safari</a>
+      <ol><li>Tap the Share button <b>⎋</b> at the bottom.</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open NEXORA from your home screen.</li></ol>
+    </div>
+    <div class="card" data-os="windows">
+      <div class="h"><div class="ic">🪟</div><div><b>Windows</b><small>Windows 10 and 11</small></div></div>
+      <a class="btn pri" href="https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA-Setup.exe">Download for Windows</a>
+      <ol><li>Run NEXORA-Setup.exe.</li><li>If you see "Windows protected your PC", click <b>More info → Run anyway</b>.</li></ol>
+    </div>
+    <div class="card" data-os="mac">
+      <div class="h"><div class="ic">💻</div><div><b>Mac</b><small>Apple silicon and Intel</small></div></div>
+      <a class="btn pri" href="https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.dmg">Download for Mac</a>
+      <ol><li>Open NEXORA.dmg and drag NEXORA to Applications.</li><li>First time: right-click NEXORA → <b>Open</b>, or System Settings → Privacy &amp; Security → <b>Open Anyway</b>.</li></ol>
+    </div>
+    <div class="card" data-os="linux">
+      <div class="h"><div class="ic">🐧</div><div><b>Linux</b><small>AppImage or Ubuntu/Debian</small></div></div>
+      <div class="links"><a class="btn pri" href="https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.AppImage">AppImage</a><a class="btn sec" href="https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.deb">.deb</a></div>
+      <ol><li>AppImage: make it executable, then run it.</li></ol>
+    </div>
+    <div class="card" data-os="web">
+      <div class="h"><div class="ic">🌐</div><div><b>Web</b><small>Any browser, nothing to install</small></div></div>
+      <a class="btn pri" href="./">Open NEXORA</a>
+      <button class="btn sec" id="pwa" hidden>Install as an app</button>
+      <ol><li>In Chrome or Edge, use <b>Install</b> in the address bar to add it like an app.</li></ol>
+    </div>
+  </div>
+
+  <footer>Your notes are private to your account. Every version updates itself.<br>NEXORA · <a href="https://github.com/khalil203/second-brain" style="color:var(--p)">GitHub</a></footer>
+</div>
+<script>
+  var ua = navigator.userAgent, plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  var ios = /iPhone|iPad|iPod/.test(ua) || (plat === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var os = /Android/i.test(ua) ? 'android' : ios ? 'ios' : /Win/i.test(plat) ? 'windows' : /Mac/i.test(plat) ? 'mac' : /Linux|CrOS/i.test(plat) ? 'linux' : 'web';
+  var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  var card = document.querySelector('[data-os="' + os + '"]');
+  card.classList.add('on'); card.querySelector('.h').insertAdjacentHTML('beforeend', '<span class="you">Your device</span>');
+  if (os !== 'web') card.parentNode.insertBefore(card, card.parentNode.firstChild);
+  var label = { android: 'Download for Android', ios: 'Open NEXORA to install', windows: 'Download for Windows', mac: 'Download for Mac', linux: 'Download for Linux', web: 'Open NEXORA' }[os];
+  var href = card.querySelector('.btn.pri').getAttribute('href');
+  var main = document.getElementById('main');
+  main.innerHTML = '<a class="btn pri" href="' + href + '">' + label + '</a><a class="btn sec" href="./">Use on the web</a>';
+  document.getElementById('mainNote').textContent = os === 'ios'
+    ? 'On iPhone and iPad, NEXORA installs from Safari: Share → Add to Home Screen.'
+    : standalone ? 'You already have NEXORA installed on this device.' : 'Free. Works offline. Sign in once to sync all your devices.';
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(function () {});
+  var deferred; window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; document.getElementById('pwa').hidden = false; });
+  document.getElementById('pwa').onclick = function () { if (deferred) { deferred.prompt(); deferred = null; this.hidden = true; } };
+</script>
+</body>
+</html>

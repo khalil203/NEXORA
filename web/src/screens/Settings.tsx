@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw, CloudUpload, LogOut, Download, ShieldCheck, Trash2, Activity, Smartphone, Sparkles } from 'lucide-react';
+import { RefreshCw, CloudUpload, LogOut, Download, ShieldCheck, Trash2, Activity, Smartphone, Sparkles, MonitorSmartphone, Share, Copy, CheckCircle2 } from 'lucide-react';
+import { canPrompt, promptInstall, device, DOWNLOAD_URL } from '../lib/install';
 import { useStore, db, nx, save, toast, today } from '../lib/store';
 import { Cloud, Profile, AI } from '../lib/cloud';
-import { APP_VERSION, APK_URL, checkUpdate, upd, NATIVE } from '../lib/update';
+import { APP_VERSION, APK_URL, checkUpdate, upd } from '../lib/update';
 import { ago } from '../lib/format';
 import { Page, Section, Toggle, Seg, Spinner, Sheet, Logo } from '../components/ui';
 import { SB_URL } from '../lib/cloud';
@@ -97,13 +98,14 @@ export default function Settings() {
         <p className="text-[12px] text-muted mt-2 px-1">Your data is private to your account (row-level security), encrypted in transit and at rest, and never used to train AI models. Restore from a file and Google Drive backup are in More → Classic tools.</p>
       </Section>
 
+      <Section title="Your devices"><Devices /></Section>
+
       <Section title="Updates">
         <div className="card px-4 divide-y hair">
           <div className="py-3 flex items-center gap-3"><Logo size={30} /><div className="flex-1"><div className="font-semibold text-[15px]">NEXORA {APP_VERSION}</div><div className="text-[12px] text-muted">{upd.ready ? `Version ${upd.ready.version} ready` : db.settings.lastCheck ? `Checked ${ago(db.settings.lastCheck)}` : 'Updates come from GitHub'}</div></div>
             {upd.ready ? <button className="btn-primary btn-sm" onClick={() => location.reload()}>Restart</button> : <button className="btn-soft btn-sm" onClick={() => checkUpdate(true)} disabled={upd.checking}>{upd.checking ? <Spinner /> : <RefreshCw size={14} />} Check</button>}</div>
           <Toggle label="Install updates automatically" on={db.settings.autoUpdate !== false} onChange={(v) => { db.settings.autoUpdate = v; save(); }} />
           {upd.apk && <a href={APK_URL} target="_blank" rel="noreferrer" className="py-3 flex items-center gap-3 text-[15px] text-primary"><Smartphone size={18} /> New Android app {upd.apk.apk_version} available</a>}
-          {!NATIVE() && <a href={APK_URL} target="_blank" rel="noreferrer" className="py-3 flex items-center gap-3 text-[14px] text-muted"><Smartphone size={18} /> Get the Android app</a>}
         </div>
       </Section>
 
@@ -158,5 +160,29 @@ function SignIn() {
       <div className="mt-3 flex gap-2"><button className="btn-primary flex-1" disabled={busy}>{busy ? <Spinner /> : 'Sign in'}</button><button type="button" className="btn-soft flex-1" disabled={busy || !email || pw.length < 6} onClick={() => go('up')}>Create account</button></div>
       <button type="button" className="mt-3 text-[13px] text-primary" onClick={async () => { if (!email) { setMsg('Type your email first'); return; } try { await Cloud.reset(email.trim()); setMsg('Password reset email sent.'); } catch (e) { setMsg((e as Error).message); } }}>Forgot password?</button>
     </form>
+  );
+}
+
+function Devices() {
+  const d = device();
+  const names = { android: 'Android', ios: 'iPhone / iPad', windows: 'Windows', mac: 'Mac', linux: 'Linux', other: 'this device' };
+  return (
+    <div className="card px-4 divide-y hair">
+      <div className="py-3 flex items-center gap-3">
+        {d.installed ? <CheckCircle2 size={18} className="text-ok shrink-0" /> : <MonitorSmartphone size={18} className="text-primary shrink-0" />}
+        <div className="flex-1 text-[14px]">
+          {d.installed ? <>NEXORA is installed on this {names[d.os]}{d.desktopApp ? ' (desktop app)' : ''}</>
+            : d.os === 'ios' ? <>Install on your {names.ios}: tap <Share size={13} className="inline -mt-0.5" /> <b>Share</b>, then <b>Add to Home Screen</b>.</>
+            : canPrompt() ? <>Install NEXORA on this {names[d.os]} so it opens like an app, even offline.</>
+            : <>You're using NEXORA in the browser. Get the app for {names[d.os]} from the download page.</>}
+        </div>
+        {!d.installed && canPrompt() && <button className="btn-primary btn-sm" onClick={() => promptInstall()}>Install</button>}
+      </div>
+      <div className="py-3 flex flex-wrap gap-2">
+        <a className="btn-soft btn-sm" href={DOWNLOAD_URL} target="_blank" rel="noreferrer"><MonitorSmartphone size={14} /> Get NEXORA on other devices</a>
+        <button className="btn-ghost btn-sm" onClick={() => { navigator.clipboard?.writeText(DOWNLOAD_URL); toast('Download link copied'); }}><Copy size={14} /> Copy link</button>
+      </div>
+      <p className="py-3 text-[12px] text-muted">Android, iPhone, iPad, Windows, Mac, Linux and the web. Sign in with the same account on each device to keep everything in sync.</p>
+    </div>
   );
 }

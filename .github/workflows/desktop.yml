@@ -1,0 +1,78 @@
+name: Desktop apps
+
+# Builds NEXORA for Windows, macOS and Linux and publishes them to the
+# "desktop-latest" release, so the download links never change:
+#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA-Setup.exe
+#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.dmg
+#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.AppImage
+#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.deb
+# The desktop app opens the hosted NEXORA, so app updates arrive without a rebuild.
+# Rebuild only when desktop/ changes (or run it by hand).
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/**', '.github/workflows/desktop.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: desktop
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Build
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nexora-${{ matrix.os }}
+          path: |
+            desktop/release/NEXORA-Setup.exe
+            desktop/release/NEXORA.dmg
+            desktop/release/NEXORA.AppImage
+            desktop/release/NEXORA.deb
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - run: ls -la out
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop-latest
+          name: NEXORA for Windows, Mac and Linux
+          make_latest: false
+          body: |
+            NEXORA desktop app. It opens your NEXORA and updates by itself, so you only install it once.
+
+            - **Windows:** NEXORA-Setup.exe. If Windows shows "Windows protected your PC", click **More info → Run anyway**.
+            - **Mac:** NEXORA.dmg. Drag NEXORA to Applications. On first open, right-click NEXORA → **Open**, or go to System Settings → Privacy & Security → **Open Anyway**.
+            - **Linux:** NEXORA.AppImage (make it executable and run it) or NEXORA.deb (Ubuntu/Debian).
+
+            All downloads: https://khalil203.github.io/second-brain/download.html
+          files: out/*
+          overwrite_files: true

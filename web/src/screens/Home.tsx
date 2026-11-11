@@ -71,7 +71,7 @@ export default function Home() {
       {!signedIn && (
         <button onClick={() => go({ name: 'settings' })} className="mt-5 w-full card p-4 flex items-center gap-3 text-left">
           <CloudOff size={22} className="text-violet shrink-0" />
-          <div className="flex-1"><div className="font-semibold text-[15px]">Switch on your AI brain</div><div className="text-[13px] text-muted">Sign in to sync across devices and use AI chat, memories and auto-organizing. Notes stay on this phone until then.</div></div>
+          <div className="flex-1"><div className="font-semibold text-[15px]">Switch on your AI brain</div><div className="text-[13px] text-muted">Sign in to sync across devices and use AI chat, memories and auto-organizing. Notes stay on this device until then.</div></div>
           <ChevronRight size={18} className="text-muted" />
         </button>
       )}

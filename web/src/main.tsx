@@ -4,6 +4,7 @@ import App from './App';
 import { load, nx, save } from './lib/store';
 import { Cloud, Profile, Inbox, AI } from './lib/cloud';
 import { scheduleUpdateChecks } from './lib/update';
+import './lib/install';
 
 (async () => {
   await load();

@@ -38,7 +38,7 @@ jobs:
       - name: Collect site files
         run: |
           mkdir site
-          cp index.html app.html classic.html version.json manifest.webmanifest sw.js site/
+          cp index.html app.html classic.html download.html version.json manifest.webmanifest sw.js site/
           cp -r icons site/
           cp -r ad-studio/dist site/ad-studio
       - uses: actions/configure-pages@v5
