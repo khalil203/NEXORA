@@ -26,7 +26,7 @@ Home → **Jarvis** (or Discover). Talk to your second brain: "add a task to cal
 
 Discover → **My Voice**. Record or upload about 10 seconds of your voice once (English and Thai are separate samples), type a script, and get an audio clip in your own voice for video voice-overs. Save it to a note, share it, or ask Jarvis: "say this in my voice: …".
 
-- Uses the open-source [F5-TTS](https://github.com/SWivid/F5-TTS) models on free Hugging Face Spaces (English: `mrfakename/E2-F5-TTS`, Thai: `pythonlearnreal/F5-TTS-THAI`, changeable in the tool). The sample and script are sent to those servers; they can be busy or out of free time.
+- Runs on free Hugging Face Spaces: English uses the open-source [F5-TTS](https://github.com/SWivid/F5-TTS) (`mrfakename/E2-F5-TTS`), Thai uses [VachaSpeech](https://huggingface.co/spaces/VIZINTZOR/VachaSpeech) (`VIZINTZOR/VachaSpeech`, CPU, about 1–3 minutes per clip). Both are changeable in the tool. The sample and script are sent to those servers; they can be busy or out of free time.
 - Voice samples stay on the phone and are not synced. Saved clips are normal notes (tag `#my-voice`).
 - Clone only your own voice.
 

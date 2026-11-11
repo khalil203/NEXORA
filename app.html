@@ -238,6 +238,7 @@ a.tg{text-decoration:none;cursor:pointer;font-weight:650}
 .fi{position:relative}
 .fi img,.fi video{max-width:150px;max-height:150px;border-radius:12px;display:block;object-fit:cover;background:var(--line)}
 #eFiles .fi img,#eFiles .fi video{max-width:100%;max-height:380px}
+#vSpeedWrap[hidden]{display:none}
 .fi.aud{flex:1 1 100%}.fi.aud audio{width:100%;height:42px;display:block}
 .fi.doc a{display:inline-block;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--solid);color:var(--ink);text-decoration:none;font-size:14px}
 .fx{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:0;background:var(--bad);color:#fff;font-size:12px;cursor:pointer}
@@ -564,7 +565,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.3.0';
+const APP_VERSION = '5.3.1';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -2303,14 +2304,15 @@ async function imgSave(){
   changed(n); haptic('success'); toast('Saved to Resources', 'Open', () => openNote(n.id)); renderImagine();
 }
 
-/* ---------- My Voice: voice-overs in your own cloned voice (open F5-TTS models on Hugging Face) ---------- */
+/* ---------- My Voice: voice-overs in your own cloned voice (open voice models on free Hugging Face Spaces: F5-TTS for English, VachaSpeech for Thai) ---------- */
 const Voice = (() => {
-  const DEF = {spaceEn:'mrfakename/E2-F5-TTS', spaceTh:'pythonlearnreal/F5-TTS-THAI', hq:true, useKey:false, speed:1, en:null, th:null};
+  const DEF = {spaceEn:'mrfakename/E2-F5-TTS', spaceTh:'VIZINTZOR/VachaSpeech', hq:true, useKey:false, speed:1, gender:'male', en:null, th:null};
   let C = Object.assign({}, DEF, (() => { try{ return JSON.parse(localStorage.getItem('sb.voice') || '{}'); }catch(e){ return {}; } })());
+  if(C.spaceTh==='pythonlearnreal/F5-TTS-THAI') C.spaceTh = DEF.spaceTh;   /* 5.3.0's Thai engine only offers multi-speaker mode */
   const saveC = () => { try{ localStorage.setItem('sb.voice', JSON.stringify(C)); }catch(e){} };
   const PROMPTS = {en:'Hello, my name is Linko. I make videos about life, style and business in Thailand, and this is how my voice really sounds.',
     th:'สวัสดีครับ ผมชื่อลิงโกะ ผมทำวิดีโอเกี่ยวกับชีวิตและธุรกิจในประเทศไทย และนี่คือเสียงของผมครับ'};
-  const LANG = {en:'English', th:'Thai'}, MAXS = 12, CHUNK = 380, sid = l => 'voice-sample-' + l;
+  const LANG = {en:'English', th:'Thai'}, MAXS = 12, CHUNK = {en:380, th:220}, sid = l => 'voice-sample-' + l;
   const S = {sl:'en', gl:'en', text:'', busy:false, err:'', last:null, rec:null, stream:null, timer:0, urls:[]};
   let actx; const ctx = () => actx || (actx = new (window.AudioContext || window.webkitAudioContext)());
 
@@ -2344,8 +2346,8 @@ const Voice = (() => {
     return wav(out, sr);
   }
   const isThai = s => /[฀-๿]/.test(s);
-  function chunks(text){
-    const out = []; let cur = '';
+  function chunks(text, max = CHUNK.en){
+    const CHUNK = max, out = []; let cur = '';
     const bits = text.replace(/\r/g, '').split(/(?<=[.!?…]|\n)\s*/).flatMap(s => s.length > CHUNK ? s.split(/(?<=[,;:]|\s)/) : [s]);
     for(let b of bits){
       while(b.length > CHUNK){ out.push(b.slice(0, CHUNK)); b = b.slice(CHUNK); }
@@ -2363,15 +2365,18 @@ const Voice = (() => {
   /* find the speech function and what each input means, so small changes to an engine don't break the app */
   function plan(api){
     const eps = Object.entries(api.named_endpoints || {}).map(([name, e]) => ({name, p:e.parameters || [], r:e.returns || []}));
-    const isA = p => /audio/i.test(p.component || ''), isT = p => /textbox|textarea/i.test(p.component || '');
-    const ok = e => e.p.some(isA) && e.p.filter(isT).length >= 2 && e.r.some(isA);
-    const ep = eps.find(e => /^\/(basic_tts|infer_tts|infer|tts|generate)$/i.test(e.name) && ok(e)) || eps.find(ok);
-    if(!ep) throw new Error('this voice engine has no speech function the app understands');
+    const isA = p => /audio/i.test(p.component || ''), isT = p => /textbox|textarea/i.test(p.component || ''), key = p => (p.parameter_name || '') + ' ' + (p.label || '');
+    /* a voice-clone function takes a sample (audio) and a script (text) and returns audio; skip giant multi-speaker forms */
+    const ok = e => e.p.length <= 40 && e.p.some(isA) && e.p.some(isT) && e.r.some(isA);
+    const score = e => (/^\/(basic_tts|infer_tts|infer|tts|generate|predict|synthesi[sz]e|clone)$/i.test(e.name) ? 100 : 0) + Math.min(2, e.p.filter(isT).length)*10 - e.p.length;
+    const ep = eps.filter(ok).sort((a, b) => score(b) - score(a))[0];
+    if(!ep) throw new Error('this voice engine has no voice-clone function the app understands. Pick another engine below');
     let ref = -1, gen = -1; const tb = [];
-    ep.p.forEach((p, i) => { if(!isT(p)) return; tb.push(i); const k = (p.parameter_name || '') + ' ' + (p.label || '');
-      if(ref < 0 && /ref|prompt|ต้นฉบับ|ต้นแบบ/i.test(k)) ref = i; else if(gen < 0 && /gen|target|synth|to generate|ที่จะสร้าง|input/i.test(k)) gen = i; });
-    if(ref < 0) ref = tb.find(i => i !== gen); if(gen < 0) gen = tb.find(i => i !== ref);
-    return {name:ep.name, params:ep.p, ref, gen, audio:ep.p.findIndex(isA), out:ep.r.findIndex(isA)};
+    ep.p.forEach((p, i) => { if(!isT(p)) return; tb.push(i); const k = key(p);
+      if(ref < 0 && /ref|prompt|ต้นฉบับ|ต้นแบบ|อ้างอิง/i.test(k)) ref = i; else if(gen < 0 && /gen|target|synth|to generate|ที่จะสร้าง|ที่ให้พูด|input/i.test(k)) gen = i; });
+    if(tb.length===1){ gen = tb[0]; ref = -1; }
+    else { if(ref < 0) ref = tb.find(i => i !== gen); if(gen < 0) gen = tb.find(i => i !== ref); }
+    return {name:ep.name, params:ep.p, ref, gen, audio:ep.p.findIndex(isA), out:ep.r.findIndex(isA), speed:ep.p.some(p => /speed|ความเร็ว/i.test(key(p)))};
   }
   async function planOf(base){
     if(plans[base]) return plans[base];
@@ -2385,6 +2390,7 @@ const Voice = (() => {
       const k = ((p.parameter_name || '') + ' ' + (p.label || '')).toLowerCase(), def = p.parameter_has_default ? p.parameter_default : p.example_input;
       if(/speed|ความเร็ว/.test(k)) return o.speed; if(/nfe/.test(k)) return o.hq ? (typeof def==='number' ? def : 32) : 16;
       if(/random/.test(k)) return true;
+      if(/gender|เพศ/.test(k)){ const ch = (p.type && p.type.enum) || []; return ch.includes(o.gender) ? o.gender : (def ?? ch[0] ?? null); }
       return def ?? null;
     });
   }
@@ -2409,7 +2415,7 @@ const Voice = (() => {
     if(!done){ const er = txt.match(/event: error\s*\ndata: (.*)/); let msg = ''; try{ const j = JSON.parse(er[1]); msg = typeof j==='string' ? j : (j && (j.error || j.message || j.title)) || ''; }catch(e){}
       throw new Error(nice(msg || 'the voice engine is out of free time or failed, try again in a few minutes')); }
     const data = JSON.parse(done[1]), f = data[pl.out] || data.find(v => v && typeof v==='object' && (v.url || v.path));
-    if(!f) throw new Error('the voice engine returned no audio');
+    if(!f){ const said = data.filter(v => typeof v==='string' && v.trim()).join(' ').slice(0, 160); throw new Error(said ? 'the voice engine said: ' + said : 'the voice engine returned no audio'); }
     const r = await fetch(f.url || `${base}/file=${f.path}`, {headers:h}); if(!r.ok) throw new Error('could not download the audio (' + r.status + ')');
     return r.blob();
   }
@@ -2420,9 +2426,9 @@ const Voice = (() => {
   async function make(text, lang, onStatus = () => {}){
     if(!navigator.onLine) throw new Error('making a voice clip needs internet');
     const s = await sampleFor(lang); if(!s) throw new Error('add a voice sample first');
-    const parts = chunks(text), blobs = [], space = lang==='th' ? C.spaceTh : C.spaceEn, o = {speed:+C.speed || 1, hq:C.hq};
+    const parts = chunks(text, CHUNK[lang]), blobs = [], space = lang==='th' ? C.spaceTh : C.spaceEn, o = {speed:+C.speed || 1, hq:C.hq, gender:C.gender};
     for(let i = 0; i < parts.length; i++){
-      onStatus((parts.length > 1 ? `Part ${i + 1} of ${parts.length} · ` : '') + 'creating your voice… (up to a minute)');
+      onStatus((parts.length > 1 ? `Part ${i + 1} of ${parts.length} · ` : '') + (lang==='th' ? 'creating your voice… (Thai takes about 1–3 minutes)' : 'creating your voice… (up to a minute)'));
       blobs.push(await speak(space, s, s.text, parts[i], o));
     }
     return {blob:await join(blobs), text, lang, note:s.lang !== lang ? `made from your ${LANG[s.lang]} sample; a ${LANG[lang]} sample will sound better` : ''};
@@ -2450,20 +2456,21 @@ const Voice = (() => {
       <div class="row"><button class="btn ${rec?'grad':'g'}" style="flex:1" data-v="rec" id="vRecBtn">${rec ? '■ Stop' : '● Record'}</button><button class="btn g" style="flex:1" data-v="pick" ${rec?'disabled':''}>Upload audio</button></div>`;
     h += `<div class="optlabel">2 · Script</div>${seg('gl', S.gl)}
       <textarea id="vText" rows="5" style="margin-top:10px" placeholder="Type or paste what your voice should say…">${esc(S.text)}</textarea>
-      <div class="optlabel">Speed <span id="vSpeedV">${(+C.speed).toFixed(2)}×</span></div><input id="vSpeed" type="range" min="0.7" max="1.3" step="0.05" value="${C.speed}" style="width:100%">
+      <div id="vSpeedWrap"><div class="optlabel">Speed <span id="vSpeedV">${(+C.speed).toFixed(2)}×</span></div><input id="vSpeed" type="range" min="0.7" max="1.3" step="0.05" value="${C.speed}" style="width:100%"></div>
       <button class="btn grad wide" style="margin-top:14px" data-v="go" ${S.busy?'disabled':''}>${S.busy ? 'Creating…' : '🗣️ Create voice clip'}</button>
       <p class="small" id="vStatus" style="margin:8px 0 0;min-height:18px"></p>`;
     if(S.last && !S.busy) h += `<audio id="vOut" controls style="width:100%"></audio>${S.last.note ? `<p class="small" style="margin:6px 0 0">${esc(S.last.note)}</p>` : ''}
       <div class="row" style="margin-top:8px"><button class="btn grad" style="flex:1" data-v="save" ${S.last.saved?'disabled':''}>${S.last.saved ? 'Saved ✓' : 'Save to notes'}</button><button class="btn g" style="flex:1" data-v="share">Share</button><button class="ib" data-v="go" aria-label="Again">↻</button></div>`;
     if(S.err) h += `<div class="banner" style="border-color:var(--bad)">⚠️ <span>${esc(S.err)}</span></div>`;
     if(clips.length) h += `<div class="sec"><h2>Your clips</h2></div>` + clips.map(n => `<div class="panel" style="margin-bottom:8px"><p style="margin:0 0 8px" data-open="${n.id}">${esc(n.title)}</p><audio data-file="${n.files[0]}" controls preload="none" style="width:100%"></audio></div>`).join('');
-    h += `<div class="sec"><h2>Voice engine</h2></div><div class="panel"><p class="mut" style="margin:0 0 8px">Uses the open-source <b>F5-TTS</b> voice models on free Hugging Face servers. Your sample and script are sent there to make the audio. The free servers can be busy or out of free time, and Thai is less accurate than English. Clone only your own voice.</p>
+    h += `<div class="sec"><h2>Voice engine</h2></div><div class="panel"><p class="mut" style="margin:0 0 8px">English uses the open-source <b>F5-TTS</b> model and Thai uses <b>VachaSpeech</b>, both on free Hugging Face servers. Your sample and script are sent there to make the audio. The free servers can be busy or out of free time, and Thai clips take 1–3 minutes. Clone only your own voice.</p>
       <label class="small">English engine</label><input id="vSpaceEn" type="text" value="${esc(C.spaceEn)}" autocomplete="off" autocapitalize="off" spellcheck="false">
       <label class="small" style="display:block;margin-top:8px">Thai engine</label><input id="vSpaceTh" type="text" value="${esc(C.spaceTh)}" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label class="small" style="display:block;margin-top:8px">Thai base voice (your sample shapes the sound on top)</label><select id="vGender"><option value="male" ${C.gender==='male'?'selected':''}>Male</option><option value="female" ${C.gender==='female'?'selected':''}>Female</option></select>
       <label class="sw2" style="margin-top:10px">Higher quality (slower)<input type="checkbox" id="vHq" ${C.hq?'checked':''}></label>
       <label class="sw2">Use my Hugging Face key for more free time<input type="checkbox" id="vUseKey" ${C.useKey?'checked':''}></label>
       <p class="small" style="margin:6px 0 0">The key is the one from Imagine. When this is on it is sent to the two engines above, so leave it off unless you trust them.</p></div>`;
-    e.innerHTML = h; hydrate(e);
+    e.innerHTML = h; hydrate(e); syncSpeed();
     if(has && !rec){ const b = await Store.getFile(sid(S.sl)).catch(() => null); const a = $('#vSample'); if(b && a) a.src = url(b); }
     if(S.last && !S.busy){ const a = $('#vOut'); if(a) a.src = url(S.last.blob); }
   }
@@ -2507,7 +2514,8 @@ const Voice = (() => {
     const t = e.target;
     if(t.id==='voicePick'){ const f = t.files[0]; t.value = ''; if(f) setSample(f, ''); }
     else if(t.id==='vRef'){ if(C[S.sl]){ C[S.sl].text = t.value.trim(); saveC(); } }
-    else if(t.id==='vSpaceEn' || t.id==='vSpaceTh'){ const k = t.id==='vSpaceEn' ? 'spaceEn' : 'spaceTh'; C[k] = t.value.trim() || DEF[k]; t.value = C[k]; saveC(); }
+    else if(t.id==='vSpaceEn' || t.id==='vSpaceTh'){ const k = t.id==='vSpaceEn' ? 'spaceEn' : 'spaceTh'; C[k] = t.value.trim() || DEF[k]; t.value = C[k]; saveC(); warm(); }
+    else if(t.id==='vGender'){ C.gender = t.value; saveC(); }
     else if(t.id==='vHq'){ C.hq = t.checked; saveC(); }
     else if(t.id==='vUseKey'){ if(t.checked && !db.settings.ai.hfToken){ t.checked = false; toast('Add your free Hugging Face key in Imagine first'); return; } C.useKey = t.checked; saveC(); }
   }
@@ -2516,7 +2524,10 @@ const Voice = (() => {
     if(t.id==='vText'){ S.text = t.value; if(t.value.trim() && isThai(t.value) !== (S.gl==='th')){ S.gl = isThai(t.value) ? 'th' : 'en'; el().querySelectorAll('[data-v="gl"]').forEach(b => b.classList.toggle('on', b.dataset.l===S.gl)); } }
     else if(t.id==='vSpeed'){ C.speed = +t.value; saveC(); const v = $('#vSpeedV'); if(v) v.textContent = C.speed.toFixed(2) + '×'; }
   }
-  function open(){ render(); openSheet('voice'); }
+  /* hide the speed slider when the chosen engine cannot change speed; look the engines up in the background */
+  function syncSpeed(){ const w = $('#vSpeedWrap'); if(!w) return; const pl = plans[baseOf(S.gl==='th' ? C.spaceTh : C.spaceEn)]; w.hidden = !!pl && !pl.speed; }
+  function warm(){ if(navigator.onLine) for(const sp of [C.spaceEn, C.spaceTh]) planOf(baseOf(sp)).then(syncSpeed).catch(() => {}); }
+  function open(){ render(); openSheet('voice'); warm(); }
   function closed(){ stopRec(); document.querySelectorAll('#voiceBody audio').forEach(a => a.pause()); }
   function init(){ const s = $('#voice'); if(!s) return; s.addEventListener('click', click); s.addEventListener('change', change); s.addEventListener('input', input); }
   /* for Jarvis: start a clip in the background and save it as a note when it is ready */
@@ -2530,7 +2541,7 @@ const Voice = (() => {
       .finally(() => { S.busy = false; if($('#voice').classList.contains('open')) render(); });
     return 'Started. The clip takes up to a minute; it will be saved as a note in Resources and he gets a notification in the app when it is ready.';
   }
-  return {open, closed, init, render, fromJarvis, _t:{chunks, plan, baseOf, make}};
+  return {open, closed, init, render, fromJarvis, _t:{chunks, plan, baseOf, make, payload}};
 })();
 Voice.init();
 
