@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "NEXORA \u2014 Your Mind. Amplified.",
   "author": "Linko <noreply@github.com>",
-  "homepage": "https://khalil203.github.io/second-brain/",
+  "homepage": "https://khalil203.github.io/NEXORA/",
   "main": "main.js",
   "license": "UNLICENSED",
   "private": true,
@@ -83,7 +83,7 @@
       {
         "provider": "github",
         "owner": "khalil203",
-        "repo": "second-brain",
+        "repo": "NEXORA",
         "releaseType": "release"
       }
     ]
@@ -94,6 +94,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/khalil203/second-brain.git"
+    "url": "https://github.com/khalil203/NEXORA.git"
   }
 }

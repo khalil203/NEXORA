@@ -30,7 +30,7 @@ export default function More() {
         ))}
       </div>
 
-      <a href="https://khalil203.github.io/second-brain/download.html" target="_blank" rel="noreferrer" className="mt-3 card p-4 flex items-center gap-3">
+      <a href="https://khalil203.github.io/NEXORA/download.html" target="_blank" rel="noreferrer" className="mt-3 card p-4 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl grad text-white flex items-center justify-center"><MonitorSmartphone size={20} /></div>
         <div className="flex-1"><div className="font-semibold text-[15px]">Get NEXORA on all your devices</div><div className="text-[12px] text-muted">Android, iPhone, iPad, Windows, Mac, Linux, web</div></div>
         <ChevronRight size={18} className="text-muted" />

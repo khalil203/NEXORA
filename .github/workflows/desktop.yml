@@ -2,10 +2,10 @@ name: Desktop apps
 
 # Builds NEXORA for Windows, macOS and Linux and publishes them to the
 # "desktop-latest" release, so the download links never change:
-#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA-Setup.exe
-#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.dmg
-#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.AppImage
-#   https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.deb
+#   https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA-Setup.exe
+#   https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.dmg
+#   https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.AppImage
+#   https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.deb
 # The desktop app opens the hosted NEXORA, so app updates arrive without a rebuild.
 # Rebuild only when desktop/ changes (or run it by hand).
 on:
@@ -73,6 +73,6 @@ jobs:
             - **Mac:** NEXORA.dmg. Drag NEXORA to Applications. On first open, right-click NEXORA → **Open**, or go to System Settings → Privacy & Security → **Open Anyway**.
             - **Linux:** NEXORA.AppImage (make it executable and run it) or NEXORA.deb (Ubuntu/Debian).
 
-            All downloads: https://khalil203.github.io/second-brain/download.html
+            All downloads: https://khalil203.github.io/NEXORA/download.html
           files: out/*
           overwrite_files: true

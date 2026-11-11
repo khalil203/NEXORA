@@ -4,7 +4,7 @@
 const { app, BrowserWindow, shell, session, Menu, nativeTheme } = require('electron');
 const path = require('path');
 
-const APP_URL = 'https://khalil203.github.io/second-brain/';
+const APP_URL = 'https://khalil203.github.io/NEXORA/';
 const ORIGIN = new URL(APP_URL).origin;
 
 if (!app.requestSingleInstanceLock()) app.quit();

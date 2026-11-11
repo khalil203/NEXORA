@@ -33,7 +33,7 @@ npm run build    # type-check + production build to dist/
 
 ## Deploy
 
-AD Studio is part of Second Brain. Every push to `main` builds it with the app (`.github/workflows/build.yml` at the repo root) and publishes it at https://khalil203.github.io/second-brain/ad-studio/
+AD Studio is part of Second Brain. Every push to `main` builds it with the app (`.github/workflows/build.yml` at the repo root) and publishes it at https://khalil203.github.io/NEXORA/ad-studio/
 
 ## Architecture
 

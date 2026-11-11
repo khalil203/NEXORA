@@ -6,16 +6,16 @@ NEXORA is a personal AI operating system and second brain (formerly *Second Brai
 
 ## Install — every device
 
-**One page for all devices:** https://khalil203.github.io/second-brain/download.html (it detects your device and has a QR code for phones).
+**One page for all devices:** https://khalil203.github.io/NEXORA/download.html (it detects your device and has a QR code for phones).
 
 | Device | How |
 |---|---|
-| Android | [second-brain.apk](https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk). Allow "Install unknown apps" when asked |
-| iPhone / iPad | Open https://khalil203.github.io/second-brain/ in Safari → Share → **Add to Home Screen** |
-| Windows | [NEXORA-Setup.exe](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA-Setup.exe) (SmartScreen: More info → Run anyway) |
-| Mac | [NEXORA.dmg](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.dmg) (first open: right-click → Open) |
-| Linux | [NEXORA.AppImage](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.AppImage) or [NEXORA.deb](https://github.com/khalil203/second-brain/releases/download/desktop-latest/NEXORA.deb) |
-| Web | https://khalil203.github.io/second-brain/ (Chrome or Edge: Install in the address bar) |
+| Android | [second-brain.apk](https://github.com/khalil203/NEXORA/raw/main/dist/second-brain.apk). Allow "Install unknown apps" when asked |
+| iPhone / iPad | Open https://khalil203.github.io/NEXORA/ in Safari → Share → **Add to Home Screen** |
+| Windows | [NEXORA-Setup.exe](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA-Setup.exe) (SmartScreen: More info → Run anyway) |
+| Mac | [NEXORA.dmg](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.dmg) (first open: right-click → Open) |
+| Linux | [NEXORA.AppImage](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.AppImage) or [NEXORA.deb](https://github.com/khalil203/NEXORA/releases/download/desktop-latest/NEXORA.deb) |
+| Web | https://khalil203.github.io/NEXORA/ (Chrome or Edge: Install in the address bar) |
 
 All versions run the same app and update themselves; sign in once on each device to sync. The desktop apps (`desktop/`, Electron) open the hosted app, so they only need rebuilding when `desktop/` changes. The **Desktop apps** workflow builds them and publishes them to the `desktop-latest` release.
 
@@ -50,7 +50,7 @@ All AI runs on the server in the Supabase edge function `nexora-ai`. No key is s
 
 ## AD Studio
 
-More → Classic tools → **AD Studio** turns product photos into Thai ad videos: product analysis, marketing strategy, storyboard, video, music, and MP4 export. Source: [`ad-studio/`](ad-studio) (React + Vite). GitHub Actions builds it and publishes it at https://khalil203.github.io/second-brain/ad-studio/ with every push. Projects stay on the device. Server functions: [`ad-studio/supabase/functions`](ad-studio/supabase/functions).
+More → Classic tools → **AD Studio** turns product photos into Thai ad videos: product analysis, marketing strategy, storyboard, video, music, and MP4 export. Source: [`ad-studio/`](ad-studio) (React + Vite). GitHub Actions builds it and publishes it at https://khalil203.github.io/NEXORA/ad-studio/ with every push. Projects stay on the device. Server functions: [`ad-studio/supabase/functions`](ad-studio/supabase/functions).
 
 ## My Voice — Thai engine
 

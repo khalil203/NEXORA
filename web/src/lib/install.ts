@@ -3,8 +3,8 @@
 import { emit } from './store';
 import { NATIVE } from './update';
 
-export const DOWNLOAD_URL = 'https://khalil203.github.io/second-brain/download.html';
-export const WEB_URL = 'https://khalil203.github.io/second-brain/';
+export const DOWNLOAD_URL = 'https://khalil203.github.io/NEXORA/download.html';
+export const WEB_URL = 'https://khalil203.github.io/NEXORA/';
 
 type BIP = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 let deferred: BIP | null = null;
