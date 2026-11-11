@@ -238,6 +238,7 @@ a.tg{text-decoration:none;cursor:pointer;font-weight:650}
 .fi{position:relative}
 .fi img,.fi video{max-width:150px;max-height:150px;border-radius:12px;display:block;object-fit:cover;background:var(--line)}
 #eFiles .fi img,#eFiles .fi video{max-width:100%;max-height:380px}
+.fi.aud{flex:1 1 100%}.fi.aud audio{width:100%;height:42px;display:block}
 .fi.doc a{display:inline-block;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--solid);color:var(--ink);text-decoration:none;font-size:14px}
 .fx{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:0;background:var(--bad);color:#fff;font-size:12px;cursor:pointer}
 
@@ -527,6 +528,12 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
   <div class="sh-top"><button class="ib flat" data-act="closeImg" aria-label="Back">←</button><b>Imagine</b><span style="width:42px"></span></div>
   <div class="sh-body" id="imgBody"></div>
 </div>
+<!-- my voice -->
+<div class="sheet" id="voice">
+  <div class="sh-top"><button class="ib flat" data-act="closeVoice" aria-label="Back">←</button><b>My Voice</b><span style="width:42px"></span></div>
+  <div class="sh-body" id="voiceBody"></div>
+  <input type="file" id="voicePick" accept="audio/*,video/*" hidden>
+</div>
 <!-- brain map -->
 <div class="sheet" id="map">
   <div class="sh-top"><button class="ib flat" data-act="closeMap" aria-label="Back">←</button><b>Brain map</b><button class="ib flat" data-act="mapReset" aria-label="Reset view">⟲</button></div>
@@ -557,7 +564,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
 <div class="toast" id="toast"><span></span><button></button></div>
 
 <script>
-const APP_VERSION = '5.2.0';
+const APP_VERSION = '5.3.0';
 const REPO = 'khalil203/second-brain', RAW = `https://raw.githubusercontent.com/${REPO}/main/`, APK_URL = `https://github.com/${REPO}/raw/main/dist/second-brain.apk`;
 const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU';
@@ -701,6 +708,7 @@ function filesHTML(ids, rm=false){
     const x = rm ? `<button class="fx" data-unfile="${id}" aria-label="Remove">✕</button>` : '';
     if(f.type.startsWith('image/')) return `<div class="fi"><img data-file="${id}" alt="${esc(f.name)}">${x}</div>`;
     if(f.type.startsWith('video/')) return `<div class="fi"><video data-file="${id}" controls playsinline preload="metadata"></video>${x}</div>`;
+    if(f.type.startsWith('audio/')) return `<div class="fi aud"><audio data-file="${id}" controls preload="none"></audio>${x}</div>`;
     return `<div class="fi doc"><a data-filelink="${id}" download="${esc(f.name)}">📄 ${esc(f.name)}</a>${x}</div>`;
   }).join('') + '</div>';
 }
@@ -1092,6 +1100,7 @@ function renderDiscover(){
   h += `<button class="panel conv-card" data-act="aiOpen"><span class="cc-i">✨</span><span><b>Brain AI</b><small>Ask by meaning, auto-organize, read text from photos</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="jarvis"><span class="cc-i">🎙️</span><span><b>Jarvis</b><small>Voice assistant for your second brain</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="imagine"><span class="cc-i">🎨</span><span><b>Imagine</b><small>Create images from text with open models</small></span><span class="cc-go">›</span></button>`;
+  h += `<button class="panel conv-card" data-act="voice"><span class="cc-i">🗣️</span><span><b>My Voice</b><small>Voice-overs in your own cloned voice, English and Thai</small></span><span class="cc-go">›</span></button>`;
   h += `<button class="panel conv-card" data-act="convert"><span class="cc-i">⇄</span><span><b>File converter</b><small>Photos, PDF, video, music, Word, Excel — on your phone</small></span><span class="cc-go">›</span></button>`;
   h += `<form class="search" id="wikiForm"><input id="wikiQ" type="search" placeholder="Search Wikipedia…" value="${esc(ui.wikiQ)}" autocomplete="off" enterkeyhint="search"></form>`;
   if(ui.wiki){
@@ -1238,11 +1247,12 @@ function onClosed(id){
   if(id==='editor') finishEditor();
   if(id==='capSheet'){ ui.capFiles = []; }
   if(id==='jarvis') Jarvis.stop();
+  if(id==='voice') Voice.closed();
   if(id!=='map' && $('#map').classList.contains('open')){ BrainMap.build(); BrainMap.paintUI(); }
   render();
 }
-addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me','jarvis'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
-function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','aiSheet','map','me','jarvis'].find(id => $('#'+id).classList.contains('open')); }
+addEventListener('popstate', () => ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis'].forEach(id => { if($('#'+id).classList.contains('open')) onClosed(id); }));
+function topOpen(){ return ['actSheet','capSheet','conv','editor','imagine','voice','aiSheet','map','me','jarvis'].find(id => $('#'+id).classList.contains('open')); }
 
 function actions(title, items){
   $('#actTitle').textContent = title;
@@ -1401,6 +1411,8 @@ async function act(a, el){
   else if(a==='closeJarvis') closeSheet('jarvis');
   else if(a==='imagine'){ renderImagine(); openSheet('imagine'); }
   else if(a==='closeImg') closeSheet('imagine');
+  else if(a==='voice'){ haptic('light'); Voice.open(); }
+  else if(a==='closeVoice') closeSheet('voice');
   else if(a==='imgGo') generateImage();
   else if(a==='imgSave') imgSave();
   else if(a==='imgShare'){ if(img.last) shareFile('image-' + Date.now() + '.jpg', img.last.blob, 'Share image'); }
@@ -2291,6 +2303,237 @@ async function imgSave(){
   changed(n); haptic('success'); toast('Saved to Resources', 'Open', () => openNote(n.id)); renderImagine();
 }
 
+/* ---------- My Voice: voice-overs in your own cloned voice (open F5-TTS models on Hugging Face) ---------- */
+const Voice = (() => {
+  const DEF = {spaceEn:'mrfakename/E2-F5-TTS', spaceTh:'pythonlearnreal/F5-TTS-THAI', hq:true, useKey:false, speed:1, en:null, th:null};
+  let C = Object.assign({}, DEF, (() => { try{ return JSON.parse(localStorage.getItem('sb.voice') || '{}'); }catch(e){ return {}; } })());
+  const saveC = () => { try{ localStorage.setItem('sb.voice', JSON.stringify(C)); }catch(e){} };
+  const PROMPTS = {en:'Hello, my name is Linko. I make videos about life, style and business in Thailand, and this is how my voice really sounds.',
+    th:'สวัสดีครับ ผมชื่อลิงโกะ ผมทำวิดีโอเกี่ยวกับชีวิตและธุรกิจในประเทศไทย และนี่คือเสียงของผมครับ'};
+  const LANG = {en:'English', th:'Thai'}, MAXS = 12, CHUNK = 380, sid = l => 'voice-sample-' + l;
+  const S = {sl:'en', gl:'en', text:'', busy:false, err:'', last:null, rec:null, stream:null, timer:0, urls:[]};
+  let actx; const ctx = () => actx || (actx = new (window.AudioContext || window.webkitAudioContext)());
+
+  /* audio helpers */
+  const decode = async blob => ctx().decodeAudioData(await blob.arrayBuffer());
+  function mono(buf){ const out = new Float32Array(buf.length); for(let c = 0; c < buf.numberOfChannels; c++){ const d = buf.getChannelData(c); for(let i = 0; i < d.length; i++) out[i] += d[i] / buf.numberOfChannels; } return out; }
+  function wav(x, sr){
+    const b = new DataView(new ArrayBuffer(44 + x.length*2)), w = (o, s) => [...s].forEach((ch, i) => b.setUint8(o + i, ch.charCodeAt(0)));
+    w(0,'RIFF'); b.setUint32(4, 36 + x.length*2, true); w(8,'WAVEfmt '); b.setUint32(16,16,true); b.setUint16(20,1,true); b.setUint16(22,1,true);
+    b.setUint32(24,sr,true); b.setUint32(28,sr*2,true); b.setUint16(32,2,true); b.setUint16(34,16,true); w(36,'data'); b.setUint32(40, x.length*2, true);
+    for(let i = 0; i < x.length; i++){ const v = Math.max(-1, Math.min(1, x[i])); b.setInt16(44 + i*2, v < 0 ? v*32768 : v*32767, true); }
+    return new Blob([b], {type:'audio/wav'});
+  }
+  /* trim silence at both ends, keep at most 12 s, bring the peak to about -3 dB */
+  async function clean(blob){
+    let buf; try{ buf = await decode(blob); }catch(e){ throw new Error('Cannot read that audio file'); }
+    let x = mono(buf); const sr = buf.sampleRate; let peak = 0; for(const v of x) peak = Math.max(peak, Math.abs(v));
+    if(peak < .005) throw new Error('That recording is silent');
+    const th = peak*.04, pad = Math.floor(sr*.15); let a = 0, z = x.length - 1;
+    while(a < z && Math.abs(x[a]) < th) a++; while(z > a && Math.abs(x[z]) < th) z--;
+    const s0 = Math.max(0, a - pad); x = x.subarray(s0, Math.min(x.length, z + pad, s0 + sr*MAXS));
+    if(x.length < sr*3) throw new Error('That sample is too short, aim for about 10 seconds');
+    const g = .7/peak, out = new Float32Array(x.length); for(let i = 0; i < x.length; i++) out[i] = x[i]*g;
+    return {blob:wav(out, sr), sec:out.length/sr};
+  }
+  async function join(blobs){
+    if(blobs.length===1) return blobs[0];
+    const parts = []; let sr = 24000; for(const b of blobs){ const d = await decode(b); sr = d.sampleRate; parts.push(mono(d)); }
+    const gap = Math.floor(sr*.28), out = new Float32Array(parts.reduce((n, p) => n + p.length, 0) + gap*(parts.length - 1)); let o = 0;
+    for(const p of parts){ out.set(p, o); o += p.length + gap; }
+    return wav(out, sr);
+  }
+  const isThai = s => /[฀-๿]/.test(s);
+  function chunks(text){
+    const out = []; let cur = '';
+    const bits = text.replace(/\r/g, '').split(/(?<=[.!?…]|\n)\s*/).flatMap(s => s.length > CHUNK ? s.split(/(?<=[,;:]|\s)/) : [s]);
+    for(let b of bits){
+      while(b.length > CHUNK){ out.push(b.slice(0, CHUNK)); b = b.slice(CHUNK); }
+      if((cur + b).length > CHUNK && cur.trim()){ out.push(cur.trim()); cur = ''; }
+      cur += (cur && !/\s$/.test(cur) ? ' ' : '') + b;
+    }
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  }
+
+  /* voice engine: a Gradio app on Hugging Face Spaces */
+  const baseOf = sp => (/^https?:\/\//.test(sp) ? sp.replace(/\/+$/, '') : 'https://' + sp.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.hf.space') + '/gradio_api';
+  const hdr = () => C.useKey && db.settings.ai.hfToken ? {Authorization:'Bearer ' + db.settings.ai.hfToken} : {};
+  const plans = {};
+  /* find the speech function and what each input means, so small changes to an engine don't break the app */
+  function plan(api){
+    const eps = Object.entries(api.named_endpoints || {}).map(([name, e]) => ({name, p:e.parameters || [], r:e.returns || []}));
+    const isA = p => /audio/i.test(p.component || ''), isT = p => /textbox|textarea/i.test(p.component || '');
+    const ok = e => e.p.some(isA) && e.p.filter(isT).length >= 2 && e.r.some(isA);
+    const ep = eps.find(e => /^\/(basic_tts|infer_tts|infer|tts|generate)$/i.test(e.name) && ok(e)) || eps.find(ok);
+    if(!ep) throw new Error('this voice engine has no speech function the app understands');
+    let ref = -1, gen = -1; const tb = [];
+    ep.p.forEach((p, i) => { if(!isT(p)) return; tb.push(i); const k = (p.parameter_name || '') + ' ' + (p.label || '');
+      if(ref < 0 && /ref|prompt|ต้นฉบับ|ต้นแบบ/i.test(k)) ref = i; else if(gen < 0 && /gen|target|synth|to generate|ที่จะสร้าง|input/i.test(k)) gen = i; });
+    if(ref < 0) ref = tb.find(i => i !== gen); if(gen < 0) gen = tb.find(i => i !== ref);
+    return {name:ep.name, params:ep.p, ref, gen, audio:ep.p.findIndex(isA), out:ep.r.findIndex(isA)};
+  }
+  async function planOf(base){
+    if(plans[base]) return plans[base];
+    let r; try{ r = await fetch(base + '/info', {headers:hdr()}); }catch(e){ throw new Error('cannot reach the voice engine'); }
+    if(!r.ok) throw new Error('the voice engine is offline or asleep (' + r.status + ')');
+    return plans[base] = plan(await r.json());
+  }
+  function payload(pl, file, refText, genText, o){
+    return pl.params.map((p, i) => {
+      if(i===pl.audio) return file; if(i===pl.ref) return refText || ''; if(i===pl.gen) return genText;
+      const k = ((p.parameter_name || '') + ' ' + (p.label || '')).toLowerCase(), def = p.parameter_has_default ? p.parameter_default : p.example_input;
+      if(/speed|ความเร็ว/.test(k)) return o.speed; if(/nfe/.test(k)) return o.hq ? (typeof def==='number' ? def : 32) : 16;
+      if(/random/.test(k)) return true;
+      return def ?? null;
+    });
+  }
+  function nice(m){
+    m = String(m || '');
+    if(/quota|exceeded|zerogpu|gpu task aborted|429/i.test(m)) return "the free voice engine's usage limit is reached for now. Try again later" + (db.settings.ai.hfToken && !C.useKey ? ', or turn on “Use my Hugging Face key” below' : '');
+    return m.slice(0, 160);
+  }
+  async function speak(space, sample, refText, genText, o){
+    const base = baseOf(space), pl = await planOf(base), h = hdr();
+    if(!sample.path || sample.base !== base){
+      const fd = new FormData(); fd.append('files', new File([sample.blob], 'sample.wav', {type:'audio/wav'}));
+      const up = await fetch(base + '/upload', {method:'POST', body:fd, headers:h}); if(!up.ok) throw new Error('could not send the voice sample (' + up.status + ')');
+      sample.path = (await up.json())[0]; sample.base = base;
+    }
+    const file = {path:sample.path, orig_name:'sample.wav', mime_type:'audio/wav', meta:{_type:'gradio.FileData'}};
+    const st = await fetch(base + '/call' + pl.name, {method:'POST', headers:{'content-type':'application/json', ...h}, body:JSON.stringify({data:payload(pl, file, refText, genText, o)})});
+    if(!st.ok) throw new Error(nice('voice engine busy (' + st.status + ')'));
+    const {event_id} = await st.json();
+    const txt = await (await fetch(`${base}/call${pl.name}/${event_id}`, {headers:h})).text();
+    const done = txt.match(/event: complete\s*\ndata: (.*)/);
+    if(!done){ const er = txt.match(/event: error\s*\ndata: (.*)/); let msg = ''; try{ const j = JSON.parse(er[1]); msg = typeof j==='string' ? j : (j && (j.error || j.message || j.title)) || ''; }catch(e){}
+      throw new Error(nice(msg || 'the voice engine is out of free time or failed, try again in a few minutes')); }
+    const data = JSON.parse(done[1]), f = data[pl.out] || data.find(v => v && typeof v==='object' && (v.url || v.path));
+    if(!f) throw new Error('the voice engine returned no audio');
+    const r = await fetch(f.url || `${base}/file=${f.path}`, {headers:h}); if(!r.ok) throw new Error('could not download the audio (' + r.status + ')');
+    return r.blob();
+  }
+  async function sampleFor(lang){
+    for(const l of [lang, lang==='en' ? 'th' : 'en']){ if(!C[l]) continue; const blob = await Store.getFile(sid(l)).catch(() => null); if(blob) return {blob, text:C[l].text || '', lang:l}; }
+    return null;
+  }
+  async function make(text, lang, onStatus = () => {}){
+    if(!navigator.onLine) throw new Error('making a voice clip needs internet');
+    const s = await sampleFor(lang); if(!s) throw new Error('add a voice sample first');
+    const parts = chunks(text), blobs = [], space = lang==='th' ? C.spaceTh : C.spaceEn, o = {speed:+C.speed || 1, hq:C.hq};
+    for(let i = 0; i < parts.length; i++){
+      onStatus((parts.length > 1 ? `Part ${i + 1} of ${parts.length} · ` : '') + 'creating your voice… (up to a minute)');
+      blobs.push(await speak(space, s, s.text, parts[i], o));
+    }
+    return {blob:await join(blobs), text, lang, note:s.lang !== lang ? `made from your ${LANG[s.lang]} sample; a ${LANG[lang]} sample will sound better` : ''};
+  }
+  async function saveClip(L){
+    const n = newNote({title:'🗣️ ' + L.text.replace(/\s+/g, ' ').slice(0, 70), body:`${L.text}\n\n${LANG[L.lang]} · my cloned voice\n\n#my-voice`, type:'note', para:'resources'});
+    n.files.push(await addFile(new File([L.blob], 'my-voice-' + Date.now() + '.wav', {type:'audio/wav'})));
+    changed(n); return n;
+  }
+
+  /* screen */
+  const el = () => $('#voiceBody');
+  const setStatus = t => { const s = $('#vStatus'); if(s) s.textContent = t; };
+  function freeUrls(){ S.urls.forEach(u => URL.revokeObjectURL(u)); S.urls = []; }
+  const url = b => { const u = URL.createObjectURL(b); S.urls.push(u); return u; };
+  async function render(){
+    const e = el(); if(!e) return; freeUrls();
+    const has = !!C[S.sl], rec = !!S.rec, clips = db.notes.filter(n => tagsOf(n).includes('my-voice') && (n.files||[]).length).sort((a,b) => b.created - a.created).slice(0, 12);
+    const seg = (k, cur) => `<div class="seg">${['en','th'].map(l => `<button class="${cur===l?'on':''}" data-v="${k}" data-l="${l}">${LANG[l]}${k==='sl' && C[l] ? ' ✓' : ''}</button>`).join('')}</div>`;
+    let h = `<div class="optlabel">1 · Your voice sample</div>${seg('sl', S.sl)}`;
+    if(has && !rec) h += `<audio id="vSample" controls style="width:100%;margin-top:10px"></audio>
+      <input id="vRef" type="text" style="margin-top:8px" placeholder="What the sample says (leave empty if unsure)" value="${esc(C[S.sl].text || '')}" autocomplete="off">
+      <div class="row" style="margin-top:8px"><button class="btn g" style="flex:1" data-v="rec">● Record again</button><button class="btn g" style="flex:1" data-v="pick">Upload</button><button class="ib" data-v="del" aria-label="Delete sample">🗑</button></div>`;
+    else h += `<div class="panel" style="margin-top:10px"><p class="small" style="margin:0 0 6px">Read this out loud for about 10 seconds, in a quiet room, close to the phone:</p><p style="margin:0">${esc(PROMPTS[S.sl])}</p></div>
+      <div class="row"><button class="btn ${rec?'grad':'g'}" style="flex:1" data-v="rec" id="vRecBtn">${rec ? '■ Stop' : '● Record'}</button><button class="btn g" style="flex:1" data-v="pick" ${rec?'disabled':''}>Upload audio</button></div>`;
+    h += `<div class="optlabel">2 · Script</div>${seg('gl', S.gl)}
+      <textarea id="vText" rows="5" style="margin-top:10px" placeholder="Type or paste what your voice should say…">${esc(S.text)}</textarea>
+      <div class="optlabel">Speed <span id="vSpeedV">${(+C.speed).toFixed(2)}×</span></div><input id="vSpeed" type="range" min="0.7" max="1.3" step="0.05" value="${C.speed}" style="width:100%">
+      <button class="btn grad wide" style="margin-top:14px" data-v="go" ${S.busy?'disabled':''}>${S.busy ? 'Creating…' : '🗣️ Create voice clip'}</button>
+      <p class="small" id="vStatus" style="margin:8px 0 0;min-height:18px"></p>`;
+    if(S.last && !S.busy) h += `<audio id="vOut" controls style="width:100%"></audio>${S.last.note ? `<p class="small" style="margin:6px 0 0">${esc(S.last.note)}</p>` : ''}
+      <div class="row" style="margin-top:8px"><button class="btn grad" style="flex:1" data-v="save" ${S.last.saved?'disabled':''}>${S.last.saved ? 'Saved ✓' : 'Save to notes'}</button><button class="btn g" style="flex:1" data-v="share">Share</button><button class="ib" data-v="go" aria-label="Again">↻</button></div>`;
+    if(S.err) h += `<div class="banner" style="border-color:var(--bad)">⚠️ <span>${esc(S.err)}</span></div>`;
+    if(clips.length) h += `<div class="sec"><h2>Your clips</h2></div>` + clips.map(n => `<div class="panel" style="margin-bottom:8px"><p style="margin:0 0 8px" data-open="${n.id}">${esc(n.title)}</p><audio data-file="${n.files[0]}" controls preload="none" style="width:100%"></audio></div>`).join('');
+    h += `<div class="sec"><h2>Voice engine</h2></div><div class="panel"><p class="mut" style="margin:0 0 8px">Uses the open-source <b>F5-TTS</b> voice models on free Hugging Face servers. Your sample and script are sent there to make the audio. The free servers can be busy or out of free time, and Thai is less accurate than English. Clone only your own voice.</p>
+      <label class="small">English engine</label><input id="vSpaceEn" type="text" value="${esc(C.spaceEn)}" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label class="small" style="display:block;margin-top:8px">Thai engine</label><input id="vSpaceTh" type="text" value="${esc(C.spaceTh)}" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label class="sw2" style="margin-top:10px">Higher quality (slower)<input type="checkbox" id="vHq" ${C.hq?'checked':''}></label>
+      <label class="sw2">Use my Hugging Face key for more free time<input type="checkbox" id="vUseKey" ${C.useKey?'checked':''}></label>
+      <p class="small" style="margin:6px 0 0">The key is the one from Imagine. When this is on it is sent to the two engines above, so leave it off unless you trust them.</p></div>`;
+    e.innerHTML = h; hydrate(e);
+    if(has && !rec){ const b = await Store.getFile(sid(S.sl)).catch(() => null); const a = $('#vSample'); if(b && a) a.src = url(b); }
+    if(S.last && !S.busy){ const a = $('#vOut'); if(a) a.src = url(S.last.blob); }
+  }
+  async function setSample(blob, text){
+    try{ const c = await clean(blob); await Store.putFile(sid(S.sl), c.blob); C[S.sl] = {text, sec:Math.round(c.sec*10)/10, at:Date.now()}; saveC(); haptic('success'); toast(LANG[S.sl] + ' voice sample saved'); }
+    catch(e){ toast(e.message); }
+    render();
+  }
+  function stopRec(){ if(S.rec && S.rec.state==='recording') S.rec.stop(); }
+  async function record(){
+    if(S.rec) return stopRec();
+    let stream; try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:true}}); }
+    catch(e){ toast('The microphone is not available here. Use Upload instead.'); return; }
+    const parts = [], lang = S.sl; let rec; try{ rec = new MediaRecorder(stream); }catch(e){ stream.getTracks().forEach(t => t.stop()); toast('Recording is not supported here. Use Upload instead.'); return; }
+    S.rec = rec; S.stream = stream; let left = MAXS;
+    rec.ondataavailable = e => e.data.size && parts.push(e.data);
+    rec.onstop = () => { clearInterval(S.timer); stream.getTracks().forEach(t => t.stop()); S.rec = null; S.sl = lang; if(parts.length) setSample(new Blob(parts, {type:rec.mimeType}), PROMPTS[lang]); else render(); };
+    S.timer = setInterval(() => { left--; const b = $('#vRecBtn'); if(b) b.textContent = `■ Stop (${left}s)`; if(left <= 0) stopRec(); }, 1000);
+    rec.start(); haptic('medium'); await render(); const b = $('#vRecBtn'); if(b) b.textContent = `■ Stop (${left}s)`;
+  }
+  async function go(){
+    if(S.busy) return; const t = ($('#vText') || {}).value?.trim() || S.text.trim(); S.text = t;
+    if(!t){ toast('Type a script first'); return; }
+    if(!C.en && !C.th){ toast('Add a voice sample first'); return; }
+    S.busy = true; S.err = ''; await render(); haptic('light');
+    try{ S.last = await make(t, S.gl, setStatus); haptic('success'); }
+    catch(e){ S.err = 'Could not create the clip: ' + e.message; S.last = null; }
+    S.busy = false; render();
+  }
+  function click(e){
+    const b = e.target.closest('[data-v]'); if(!b) return; const a = b.dataset.v;
+    if(a==='sl' || a==='gl'){ S.text = ($('#vText') || {}).value ?? S.text; S[a] = b.dataset.l; render(); }
+    else if(a==='rec') record();
+    else if(a==='pick') $('#voicePick').click();
+    else if(a==='del'){ if(confirm('Delete this voice sample?')){ Store.delFile(sid(S.sl)); C[S.sl] = null; saveC(); render(); } }
+    else if(a==='go') go();
+    else if(a==='save'){ if(S.last && !S.last.saved){ S.last.saved = true; saveClip(S.last).then(n => { toast('Saved to Resources', 'Open', () => openNote(n.id)); render(); }).catch(er => { S.last.saved = false; toast(er.message); }); } }
+    else if(a==='share'){ if(S.last) shareFile('my-voice-' + Date.now() + '.wav', S.last.blob, 'Share voice clip'); }
+  }
+  function change(e){
+    const t = e.target;
+    if(t.id==='voicePick'){ const f = t.files[0]; t.value = ''; if(f) setSample(f, ''); }
+    else if(t.id==='vRef'){ if(C[S.sl]){ C[S.sl].text = t.value.trim(); saveC(); } }
+    else if(t.id==='vSpaceEn' || t.id==='vSpaceTh'){ const k = t.id==='vSpaceEn' ? 'spaceEn' : 'spaceTh'; C[k] = t.value.trim() || DEF[k]; t.value = C[k]; saveC(); }
+    else if(t.id==='vHq'){ C.hq = t.checked; saveC(); }
+    else if(t.id==='vUseKey'){ if(t.checked && !db.settings.ai.hfToken){ t.checked = false; toast('Add your free Hugging Face key in Imagine first'); return; } C.useKey = t.checked; saveC(); }
+  }
+  function input(e){
+    const t = e.target;
+    if(t.id==='vText'){ S.text = t.value; if(t.value.trim() && isThai(t.value) !== (S.gl==='th')){ S.gl = isThai(t.value) ? 'th' : 'en'; el().querySelectorAll('[data-v="gl"]').forEach(b => b.classList.toggle('on', b.dataset.l===S.gl)); } }
+    else if(t.id==='vSpeed'){ C.speed = +t.value; saveC(); const v = $('#vSpeedV'); if(v) v.textContent = C.speed.toFixed(2) + '×'; }
+  }
+  function open(){ render(); openSheet('voice'); }
+  function closed(){ stopRec(); document.querySelectorAll('#voiceBody audio').forEach(a => a.pause()); }
+  function init(){ const s = $('#voice'); if(!s) return; s.addEventListener('click', click); s.addEventListener('change', change); s.addEventListener('input', input); }
+  /* for Jarvis: start a clip in the background and save it as a note when it is ready */
+  function fromJarvis(text, lang){
+    text = String(text || '').trim(); if(!text) return 'no text given';
+    if(!C.en && !C.th) return 'There is no voice sample yet. Tell him to open My Voice in Discover and add a sample first.';
+    if(S.busy) return 'A voice clip is already being made. Ask again when it is finished.';
+    lang = lang==='th' || lang==='en' ? lang : (isThai(text) ? 'th' : 'en'); S.busy = true; S.err = ''; S.text = text; S.gl = lang;
+    make(text, lang).then(async L => { S.last = L; L.saved = true; const n = await saveClip(L); haptic('success'); toast('🗣️ Your voice clip is ready', 'Open', () => openNote(n.id)); })
+      .catch(e => { S.err = 'Could not create the clip: ' + e.message; toast('🗣️ ' + S.err); })
+      .finally(() => { S.busy = false; if($('#voice').classList.contains('open')) render(); });
+    return 'Started. The clip takes up to a minute; it will be saved as a note in Resources and he gets a notification in the app when it is ready.';
+  }
+  return {open, closed, init, render, fromJarvis, _t:{chunks, plan, baseOf, make}};
+})();
+Voice.init();
+
 /* ================= Jarvis voice assistant ================= */
 const Jarvis = (() => {
   const GROQ = 'https://api.groq.com/openai/v1/';
@@ -2497,12 +2740,13 @@ const Jarvis = (() => {
       F('open_on_phone', 'Open something on the phone: call, sms, line, whatsapp, maps, youtube, google, facebook, tiktok, email, url', {action:{type:'string', enum:['call','sms','line','whatsapp','maps','youtube','google','facebook','tiktok','email','url']}, target:{type:'string'}, text:{type:'string'}}, ['action','target']),
       F('set_reminder', 'Remind the user after some minutes (Second Brain must stay open)', {minutes:{type:'number'}, text:{type:'string'}}, ['minutes','text']),
       F('get_weather', 'Current weather and 3-day forecast for a city', {city:{type:'string'}}),
-      F('web_search', 'Search the internet for current information, news, prices or facts', {query:{type:'string'}}, ['query'])];
+      F('web_search', 'Search the internet for current information, news, prices or facts', {query:{type:'string'}}, ['query']),
+      F('speak_in_my_voice', "Make an audio clip of a text spoken in the user's own cloned voice, for video voice-overs. Use when he asks to say, read or record something in his voice. Pass the exact words to speak.", {text:{type:'string'}, language:{type:'string', enum:['en','th']}}, ['text'])];
     if(hooks.length) d.unshift({type:'function', function:{name:'run_automation', description:'Run one of the user\'s Make.com automations. Available: ' + hooks.map(h => `"${h.name}" (${h.desc})`).join('; '),
       parameters:{type:'object', properties:{name:{type:'string', enum:hooks.map(h => h.name)}, data:{type:'object', description:'fields to send', additionalProperties:true}}, required:['name']}}});
     return d;
   }
-  const LABEL = {search_notes:'🔎 Searching your notes', read_note:'📖 Reading note', create_note:'📝 Saved to Second Brain', update_note:'✏️ Updated', list_tasks:'✅ Checking tasks', add_to_journal:'📔 Added to journal', remember:'🧠 Remembered', forget:'🧹 Forgot', open_on_phone:'📱 Opening', set_reminder:'⏰ Reminder set', get_weather:'🌤️ Checking weather', web_search:'🌐 Searching the web', run_automation:'⚙️ Running Make automation'};
+  const LABEL = {search_notes:'🔎 Searching your notes', read_note:'📖 Reading note', create_note:'📝 Saved to Second Brain', update_note:'✏️ Updated', list_tasks:'✅ Checking tasks', add_to_journal:'📔 Added to journal', remember:'🧠 Remembered', forget:'🧹 Forgot', open_on_phone:'📱 Opening', set_reminder:'⏰ Reminder set', get_weather:'🌤️ Checking weather', web_search:'🌐 Searching the web', speak_in_my_voice:'🗣️ Making a clip in your voice', run_automation:'⚙️ Running Make automation'};
   async function run(name, a){
     switch(name){
       case 'search_notes': { const r = search(a.query || ''); r.slice(0,3).forEach(n => addNoteCard(n)); return JSON.stringify(r.map(brief)); }
@@ -2566,6 +2810,7 @@ const Jarvis = (() => {
         }
         return 'web search unavailable';
       }
+      case 'speak_in_my_voice': return Voice.fromJarvis(a.text, a.language);
       case 'run_automation': {
         const h = parseHooks().find(x => x.name===a.name); if(!h) return 'automation not found';
         const payload = {...(a.data||{}), _from:'Jarvis', _time:new Date().toISOString()};
