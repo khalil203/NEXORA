@@ -41,7 +41,7 @@ Discover → **My Voice**. Record or upload about 10 seconds of your voice once 
 
 ## Converter
 
-The Convert tool (Home → Convert, or Discover) changes files on the device: images (JPG, PNG, WEBP, PDF), PDF (JPG, PNG, TXT), video and audio via ffmpeg.wasm (MP4, MP3, GIF, WEBM, M4A, WAV, OGG), spreadsheets via SheetJS, Word via mammoth. The donut format picker is inspired by [Filee](https://github.com/KnifeLemon/Filee) (MIT, © Myeonggu Kim). The desktop version is [Second Brain Convert](https://github.com/khalil203/second-brain-convert).
+The Convert tool (Home → Convert, or Discover) changes files on the device: images (JPG, PNG, WEBP, PDF), PDF (JPG, PNG, TXT), video and audio via ffmpeg.wasm (MP4, MP3, GIF, WEBM, M4A, WAV, OGG), spreadsheets via SheetJS, Word via mammoth. The donut format picker is inspired by [Filee](https://github.com/KnifeLemon/Filee) (MIT, © Myeonggu Kim). The Windows desktop version, **Second Brain Convert** (200+ formats), is in [`convert-windows/`](convert-windows); download it from [Releases](https://github.com/khalil203/second-brain/releases).
 
 ## Cloud
 

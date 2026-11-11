@@ -1,0 +1,62 @@
+name: Build Second Brain Convert (Windows)
+
+# Builds the Windows desktop converter in convert-windows/ and publishes a
+# portable zip as a GitHub release (tag convert-v<version>). The release is
+# never marked "latest", so the Second Brain APK release stays the latest one.
+# Runs when convert-windows/ changes, or by hand (Actions → Run workflow).
+on:
+  push:
+    branches: [main]
+    paths: ['convert-windows/**', '.github/workflows/convert-windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: convert-windows
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: convert-windows
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: convert-windows/global.json
+
+      - name: Fonts
+        shell: pwsh
+        run: ./build/fetch-fonts.ps1
+
+      - name: Version
+        id: v
+        shell: pwsh
+        run: |
+          $v = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Publish
+        run: dotnet publish src/Filee.App -c Release -r win-x64 --self-contained -o publish/win-x64
+
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path publish/win-x64/* -DestinationPath SecondBrainConvert-win-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SecondBrainConvert-win-x64
+          path: convert-windows/SecondBrainConvert-win-x64.zip
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: convert-v${{ steps.v.outputs.version }}
+          name: Second Brain Convert ${{ steps.v.outputs.version }} (Windows)
+          files: convert-windows/SecondBrainConvert-win-x64.zip
+          make_latest: false
+          overwrite_files: true
