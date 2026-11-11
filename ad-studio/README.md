@@ -33,8 +33,7 @@ npm run build    # type-check + production build to dist/
 
 ## Deploy
 
-Every push to `main` builds and deploys automatically (`.github/workflows/deploy.yml`).
-The workflow publishes `dist/` to the `gh-pages` branch → https://khalil203.github.io/ai-ad-studio/
+AD Studio is part of Second Brain. Every push to `main` builds it with the app (`.github/workflows/build.yml` at the repo root) and publishes it at https://khalil203.github.io/second-brain/ad-studio/
 
 ## Architecture
 
