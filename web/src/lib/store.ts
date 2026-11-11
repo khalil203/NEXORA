@@ -33,7 +33,7 @@ export interface NX {
   inbox: Record<string, InboxEntry>;
   briefing?: { date: string; data: Briefing; at: number };
   prefs: { ai_processing: boolean; auto_organize: boolean; memory_suggestions: boolean; task_creation: 'off' | 'suggest' | 'auto' };
-  lastConversation?: string; onboarded?: boolean; recentSearches: string[];
+  lastConversation?: string; onboarded?: boolean; welcomed?: boolean; recentSearches: string[];
 }
 export interface Briefing { headline: string; focus: { text: string; ref: string | null }[]; heads_up: string[]; evidence?: { tasks: number; inbox: number; recent: number } }
 

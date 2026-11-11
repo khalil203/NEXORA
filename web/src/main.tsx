@@ -9,6 +9,12 @@ import './lib/install';
 (async () => {
   await load();
   createRoot(document.getElementById('root')!).render(<App />);
+  // Launch screen: let the entrance play (≈1.4 s from first paint), then fade into the app.
+  const started = (window as any).__nxLaunch || Date.now();
+  setTimeout(() => {
+    const el = document.getElementById('nx-launch'); if (!el) return;
+    el.classList.add('out'); setTimeout(() => el.remove(), 550);
+  }, Math.max(150, 1400 - (Date.now() - started)));
   document.title = 'NEXORA';
   if (navigator.storage?.persist) navigator.storage.persist().catch(() => null);
   if (Cloud.on()) {

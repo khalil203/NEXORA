@@ -77,8 +77,8 @@ jobs:
           perl -0pi -e 's#<application#<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <queries><intent><action android:name="android.intent.action.TTS_SERVICE" /></intent></queries>\n\n    <application#' android/app/src/main/AndroidManifest.xml
           grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml
           npx --yes @capacitor/assets@latest generate --android \
-            --iconBackgroundColor '#101626' --iconBackgroundColorDark '#101626' \
-            --splashBackgroundColor '#101626' --splashBackgroundColorDark '#101626' \
+            --iconBackgroundColor '#000211' --iconBackgroundColorDark '#000211' \
+            --splashBackgroundColor '#000211' --splashBackgroundColorDark '#000211' \
             || echo "::warning::Icon generation failed, using default icons"
           npx cap sync android
 

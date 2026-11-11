@@ -2,9 +2,9 @@
   "appId": "com.khalil.secondbrain",
   "appName": "NEXORA",
   "webDir": "www",
-  "backgroundColor": "#101626",
+  "backgroundColor": "#000211",
   "android": {
-    "backgroundColor": "#101626",
+    "backgroundColor": "#000211",
     "allowMixedContent": false
   }
 }

@@ -140,18 +140,18 @@ function Account() {
   );
 }
 
-function SignIn() {
+export function SignIn({ onDone, plain = false }: { onDone?: () => void; plain?: boolean }) {
   const [user, setUser] = useState(''); const [pw, setPw] = useState('');
   const [busy, setBusy] = useState(false); const [msg, setMsg] = useState('');
   async function signIn() {
     setBusy(true); setMsg('');
-    try { await Cloud.signIn(user, pw); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); }
+    try { await Cloud.signIn(user, pw); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); onDone?.(); }
     catch (e) { setMsg((e as Error).message); }
     setBusy(false);
   }
   return (
-    <form className="card p-4" onSubmit={(e) => { e.preventDefault(); signIn(); }}>
-      <p className="text-[14px] text-muted mb-3">Sign in to sync across devices, back up daily, and switch on AI chat, memories and auto-organizing. Notes already on this device are uploaded to your private account.</p>
+    <form className={plain ? '' : 'card p-4'} onSubmit={(e) => { e.preventDefault(); signIn(); }}>
+      {!plain && <p className="text-[14px] text-muted mb-3">Sign in to sync across devices, back up daily, and switch on AI chat, memories and auto-organizing. Notes already on this device are uploaded to your private account.</p>}
       <input className="input" type="text" placeholder="Username" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={user} onChange={(e) => setUser(e.target.value)} required />
       <input className="input mt-2" type="password" placeholder="Password" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} required />
       {msg && <p className="text-[13px] mt-2 text-warn">{msg}</p>}
