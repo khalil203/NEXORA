@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowUp, Brain, CheckSquare, Mic, Camera, Link2, StickyNote, Sparkles, Inbox as InboxI, RefreshCw, ChevronRight, Pin, CloudOff, AlertTriangle } from 'lucide-react';
 import { useStore, db, nx, save, openTasks, today, addDays, inboxNotes, type Note } from '../lib/store';
 import { go, openOverlay } from '../lib/nav';
-import { Cloud, AI, AIError } from '../lib/cloud';
+import { Cloud, AI, AIError, displayUser } from '../lib/cloud';
 import { greeting, ago, TYPES, snippet } from '../lib/format';
 import { Section, Spinner, Logo } from '../components/ui';
 import { TaskRow } from './Tasks';
@@ -49,7 +49,7 @@ export default function Home() {
           <h1 className="text-[24px] sm:text-[28px] leading-tight font-bold tracking-tight">{greeting()}{nx.name ? `, ${nx.name}` : ''}</h1>
         </div>
         <button onClick={() => go({ name: 'settings' })} className="relative w-10 h-10 rounded-full grad text-white font-semibold" aria-label="Account">
-          {(nx.name || Cloud.user()?.email || 'N')[0].toUpperCase()}
+          {(nx.name || displayUser(Cloud.user()?.email) || 'N')[0].toUpperCase()}
           <span className={`absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ring-2 ring-bg ${!signedIn ? 'bg-muted' : Cloud.state === 'err' ? 'bg-bad' : Cloud.state === 'busy' ? 'bg-warn' : 'bg-ok'}`} />
         </button>
       </header>

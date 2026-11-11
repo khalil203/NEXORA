@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Home as HomeI, Brain, Plus, CheckSquare, LayoutGrid, Sparkles, Inbox as InboxI, Library, Network, CalendarCheck, FolderKanban, Briefcase, GraduationCap, Users, Calendar, Wallet, Workflow, LineChart, Settings as SettingsI, WandSparkles, type LucideIcon } from 'lucide-react';
 import { useStore, nx, db, inboxNotes } from './lib/store';
 import { nav, route, go, openOverlay, type Route } from './lib/nav';
-import { Cloud } from './lib/cloud';
+import { Cloud, displayUser } from './lib/cloud';
 import { upd } from './lib/update';
 import { Toasts, Wordmark } from './components/ui';
 import Home from './screens/Home';
@@ -138,8 +138,8 @@ function SyncFoot() {
   const color = !u ? 'bg-muted' : Cloud.state === 'err' || db.cloud.error ? 'bg-bad' : Cloud.state === 'busy' ? 'bg-warn' : 'bg-ok';
   return (
     <button onClick={() => go({ name: 'settings' })} className="mt-3 mx-1 flex items-center gap-3 rounded-xl p-3 hover:bg-raised text-left">
-      <div className="w-9 h-9 rounded-full grad flex items-center justify-center text-white font-semibold">{(nx.name || u?.email || 'N')[0].toUpperCase()}</div>
-      <div className="min-w-0 flex-1"><div className="text-[13px] font-semibold truncate">{nx.name || u?.email || 'Guest'}</div><div className="text-[12px] text-muted flex items-center gap-1.5"><span className={`w-1.5 h-1.5 rounded-full ${color}`} />{label}</div></div>
+      <div className="w-9 h-9 rounded-full grad flex items-center justify-center text-white font-semibold">{(nx.name || displayUser(u?.email) || 'N')[0].toUpperCase()}</div>
+      <div className="min-w-0 flex-1"><div className="text-[13px] font-semibold truncate">{nx.name || displayUser(u?.email) || 'Guest'}</div><div className="text-[12px] text-muted flex items-center gap-1.5"><span className={`w-1.5 h-1.5 rounded-full ${color}`} />{label}</div></div>
     </button>
   );
 }

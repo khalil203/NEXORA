@@ -56,6 +56,10 @@ More → Classic tools → **AD Studio** turns product photos into Thai ad video
 
 For a closer Thai voice, make your own free Hugging Face Space from [`voice-engines/thai/`](voice-engines/thai) (F5-TTS-THAI by VIZINTZOR, CC-BY 4.0) and put its name in My Voice → Thai engine.
 
+## Account
+
+Sign in with username **Nexora** (Settings → Account & sync). Sign-ups are closed: the trigger `nexora_block_signups` on `auth.users` refuses every new account, including through the Supabase dashboard. To add an account on purpose, run the insert in SQL after `select set_config('nexora.allow_signup','on',true);` in the same transaction, or drop the trigger.
+
 ## Cloud and privacy
 
 Supabase project `kshhznqxudcaipizpxvv` (Singapore). Every table has row-level security, so each account sees only its own rows. Files live in the private `brain` bucket under the user's own folder. There are daily backups (last 14 kept), export of everything, and permanent deletion. Private data is never used to train models. Schema: [supabase/migrations](supabase/migrations).

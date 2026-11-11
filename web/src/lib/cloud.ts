@@ -7,6 +7,11 @@ export const SB_URL = 'https://kshhznqxudcaipizpxvv.supabase.co';
 export const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaGh6bnF4dWRjYWlwaXpweHZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNzYwODYsImV4cCI6MjEwODc1MjA4Nn0._6bQRQh3jDap48iw_tfNnfGAkOPlWYeU4wHm_4BFmzU'; // public anon key (RLS protects data)
 export const FN = `${SB_URL}/functions/v1/nexora-ai`;
 
+// Accounts are username-based: "Nexora" signs in as nexora@nexora.invalid. A full email still works.
+const USER_DOMAIN = '@nexora.invalid';
+export const loginEmail = (id: string) => { const v = id.trim(); return v.includes('@') ? v : v.toLowerCase() + USER_DOMAIN; };
+export const displayUser = (email?: string | null) => (!email ? '' : email.endsWith(USER_DOMAIN) ? email.slice(0, -USER_DOMAIN.length).replace(/^./, (c) => c.toUpperCase()) : email);
+
 async function getJSON(url: string, opt: RequestInit = {}, ms = 15000) {
   const c = new AbortController(); const t = setTimeout(() => c.abort(), ms);
   try {
@@ -31,14 +36,10 @@ export const Cloud = {
     db.cloud.session = { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600), user: { id: j.user.id, email: j.user.email } } as Session;
     save();
   },
-  async signUp(email: string, pw: string) {
-    const j = await this.auth('signup', { email, password: pw });
-    if (j.access_token) { this.setSession(j); await this.afterSignIn(); return 'in'; }
-    return 'confirm';
-  },
-  async signIn(email: string, pw: string) {
+  async signIn(id: string, pw: string) {
     const prev = db.cloud.lastUser;
-    this.setSession(await this.auth('token?grant_type=password', { email, password: pw }));
+    try { this.setSession(await this.auth('token?grant_type=password', { email: loginEmail(id), password: pw })); }
+    catch (e) { throw new Error(/invalid/i.test((e as Error).message) ? 'Wrong username or password' : (e as Error).message); }
     await this.afterSignIn(prev);
   },
   async afterSignIn(prev?: string) {

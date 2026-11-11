@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { RefreshCw, CloudUpload, LogOut, Download, ShieldCheck, Trash2, Activity, Smartphone, Sparkles, MonitorSmartphone, Share, Copy, CheckCircle2 } from 'lucide-react';
 import { canPrompt, promptInstall, device, DOWNLOAD_URL } from '../lib/install';
 import { useStore, db, nx, save, toast, today } from '../lib/store';
-import { Cloud, Profile, AI } from '../lib/cloud';
+import { Cloud, Profile, AI, displayUser } from '../lib/cloud';
 import { APP_VERSION, APK_URL, checkUpdate, upd } from '../lib/update';
 import { ago } from '../lib/format';
 import { Page, Section, Toggle, Seg, Spinner, Sheet, Logo } from '../components/ui';
@@ -61,10 +61,10 @@ export default function Settings() {
   return (
     <Page title="Settings">
       <div className="card p-4 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl grad text-white text-[22px] font-bold flex items-center justify-center">{(name || u?.email || 'N')[0].toUpperCase()}</div>
+        <div className="w-14 h-14 rounded-2xl grad text-white text-[22px] font-bold flex items-center justify-center">{(name || displayUser(u?.email) || 'N')[0].toUpperCase()}</div>
         <div className="flex-1 min-w-0">
           <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => { nx.name = name.trim(); save(); Profile.push(); }} placeholder="Your name" className="w-full bg-transparent outline-none text-[18px] font-semibold" />
-          <div className="text-[13px] text-muted truncate">{u ? u.email : 'Not signed in · notes are on this device only'}</div>
+          <div className="text-[13px] text-muted truncate">{u ? `Signed in as ${displayUser(u.email)}` : 'Not signed in · notes are on this device only'}</div>
         </div>
       </div>
 
@@ -141,24 +141,22 @@ function Account() {
 }
 
 function SignIn() {
-  const [email, setEmail] = useState(''); const [pw, setPw] = useState('');
+  const [user, setUser] = useState(''); const [pw, setPw] = useState('');
   const [busy, setBusy] = useState(false); const [msg, setMsg] = useState('');
-  async function go(mode: 'in' | 'up') {
+  async function signIn() {
     setBusy(true); setMsg('');
-    try {
-      if (mode === 'in') { await Cloud.signIn(email.trim(), pw); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); }
-      else { const r = await Cloud.signUp(email.trim(), pw); if (r === 'confirm') setMsg('Check your email to confirm your account, then sign in here.'); else toast('Account created'); }
-    } catch (e) { setMsg((e as Error).message); }
+    try { await Cloud.signIn(user, pw); toast('Signed in. Your notes are syncing.'); AI.loadStatus(); }
+    catch (e) { setMsg((e as Error).message); }
     setBusy(false);
   }
   return (
-    <form className="card p-4" onSubmit={(e) => { e.preventDefault(); go('in'); }}>
+    <form className="card p-4" onSubmit={(e) => { e.preventDefault(); signIn(); }}>
       <p className="text-[14px] text-muted mb-3">Sign in to sync across devices, back up daily, and switch on AI chat, memories and auto-organizing. Notes already on this device are uploaded to your private account.</p>
-      <input className="input" type="email" placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input className="input mt-2" type="password" placeholder="Password (6+ characters)" autoComplete="current-password" minLength={6} value={pw} onChange={(e) => setPw(e.target.value)} required />
+      <input className="input" type="text" placeholder="Username" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={user} onChange={(e) => setUser(e.target.value)} required />
+      <input className="input mt-2" type="password" placeholder="Password" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} required />
       {msg && <p className="text-[13px] mt-2 text-warn">{msg}</p>}
-      <div className="mt-3 flex gap-2"><button className="btn-primary flex-1" disabled={busy}>{busy ? <Spinner /> : 'Sign in'}</button><button type="button" className="btn-soft flex-1" disabled={busy || !email || pw.length < 6} onClick={() => go('up')}>Create account</button></div>
-      <button type="button" className="mt-3 text-[13px] text-primary" onClick={async () => { if (!email) { setMsg('Type your email first'); return; } try { await Cloud.reset(email.trim()); setMsg('Password reset email sent.'); } catch (e) { setMsg((e as Error).message); } }}>Forgot password?</button>
+      <button className="btn-primary w-full mt-3" disabled={busy || !user.trim() || !pw}>{busy ? <Spinner /> : 'Sign in'}</button>
+      <p className="mt-3 text-[12px] text-muted">New accounts can't be created here. Sign in with your NEXORA account.</p>
     </form>
   );
 }
