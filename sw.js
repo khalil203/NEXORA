@@ -1,5 +1,5 @@
 // Offline support for the web version (GitHub Pages). Network first, cache as fallback.
-const CACHE = 'nexora-v6.4';
+const CACHE = 'nexora-v6.4.1';
 const CORE = ['./', 'index.html', 'app.html', 'classic.html', 'download.html', 'manifest.webmanifest', 'version.json', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {

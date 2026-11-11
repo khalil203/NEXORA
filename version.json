@@ -1,5 +1,5 @@
 {
-  "version": "6.4.0",
-  "apk_version": "1.7.0",
-  "notes": "New animated launch screen and welcome screen"
+  "version": "6.4.1",
+  "apk_version": "1.8.0",
+  "notes": "App icon and launch screen use the full NEXORA logo"
 }
