@@ -1,16 +1,28 @@
 {
-  "name": "Second Brain",
-  "short_name": "Brain",
-  "description": "Your personal second brain — notes, tasks, journal, files and live info, synced to the cloud and offline first.",
+  "name": "NEXORA",
+  "short_name": "NEXORA",
+  "description": "NEXORA, your personal AI operating system and second brain. Your Mind. Amplified.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#070B14",
-  "theme_color": "#070B14",
+  "background_color": "#101626",
+  "theme_color": "#101626",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

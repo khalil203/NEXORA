@@ -38,7 +38,7 @@ jobs:
       - name: Collect site files
         run: |
           mkdir site
-          cp index.html app.html version.json manifest.webmanifest sw.js site/
+          cp index.html app.html classic.html version.json manifest.webmanifest sw.js site/
           cp -r icons site/
           cp -r ad-studio/dist site/ad-studio
       - uses: actions/configure-pages@v5
@@ -64,7 +64,7 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir -p www
-          cp index.html app.html version.json manifest.webmanifest www/
+          cp index.html app.html classic.html version.json manifest.webmanifest www/
           cp -r icons www/
 
       - name: Create Android project (Capacitor)
@@ -77,8 +77,8 @@ jobs:
           perl -0pi -e 's#<application#<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <queries><intent><action android:name="android.intent.action.TTS_SERVICE" /></intent></queries>\n\n    <application#' android/app/src/main/AndroidManifest.xml
           grep -q RECORD_AUDIO android/app/src/main/AndroidManifest.xml
           npx --yes @capacitor/assets@latest generate --android \
-            --iconBackgroundColor '#070B14' --iconBackgroundColorDark '#070B14' \
-            --splashBackgroundColor '#070B14' --splashBackgroundColorDark '#070B14' \
+            --iconBackgroundColor '#101626' --iconBackgroundColorDark '#101626' \
+            --splashBackgroundColor '#101626' --splashBackgroundColorDark '#101626' \
             || echo "::warning::Icon generation failed, using default icons"
           npx cap sync android
 
@@ -124,7 +124,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-v${{ env.APKV }}
-          name: Second Brain for Android ${{ env.APKV }}
+          name: NEXORA for Android ${{ env.APKV }}
           body: Install second-brain.apk on your Android phone. After that, app updates arrive through the update button inside the app.
           files: second-brain.apk
           make_latest: true

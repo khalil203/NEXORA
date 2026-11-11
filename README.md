@@ -1,72 +1,91 @@
-# Second Brain 🧠
+# NEXORA
 
-A personal second-brain app in the Neural Night design: notes, tasks with due dates, daily journal, tags, linked notes, a 3D Brain map of how your notes connect, focus card and streaks, photos and files, AD Studio for Thai ad videos, plus a Discover tab with weather, currency, news and Wikipedia search, and a file converter for photos, PDFs, video, music, Word and Excel files. Works offline, syncs to the cloud when you sign in, and backs up daily.
+**Your Mind. Amplified.** — Everything connected. Nothing forgotten.
+
+NEXORA is a personal AI operating system and second brain (formerly *Second Brain*). Capture anything, and NEXORA organizes it, finds the tasks, dates and people in it, remembers what matters with your approval, and answers your questions from your own knowledge, with sources.
 
 ## Install
 
-- **Android app:** download [second-brain.apk](https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk) and open it (allow "Install unknown apps" for your browser when asked).
+- **Android app:** download [second-brain.apk](https://github.com/khalil203/second-brain/raw/main/dist/second-brain.apk) and open it (allow "Install unknown apps" when asked). Phones already running Second Brain update to NEXORA by themselves; your notes stay.
 - **Web app:** open https://khalil203.github.io/second-brain/ in Chrome, then menu ⋮ → **Install app**.
 
-## Brain AI and Imagine
+## What's in 6.0 (Phase 1)
 
-Open-source models that run on the phone, no AI company involved:
+| Module | What it does |
+|---|---|
+| **Home** | Greeting, AI daily briefing (from your real tasks, with evidence), ask box, quick capture, priorities, inbox and memories waiting for you, pinned and recent notes |
+| **AI Brain** | Chat with your second brain. Streams answers grounded in your notes, memories and past chats, with numbered citations you can tap. History, voice input, save an answer as a note, turn it into a task |
+| **Capture** | Text, voice (with transcription), camera, files, links and paste. Works offline; originals are always kept |
+| **Inbox** | AI pipeline with statuses (Received → Processing → Organized / Needs review / Failed): summary, area, tags, people, dates, tasks, decisions, memory suggestions, related notes. File with one tap, undo any time |
+| **Knowledge Vault** | Notes, tasks, ideas, links, people, journal in Projects / Areas / Resources / Archive. Instant search plus search by meaning, tags, `[[wiki links]]`, backlinks, Markdown with tappable checklists, attachments |
+| **My Memories** | What NEXORA remembers, grouped by category: approve or dismiss suggestions, edit (with version history), see the source, mark outdated, forget permanently |
+| **Tasks** | Today / Upcoming / Anytime / Done |
+| **Settings** | Account and sync, AI autonomy controls, activity log ("what the AI did and why"), dark/light, export everything, delete all cloud data, updates |
+| **Classic tools** | AD Studio, Converter, Jarvis, My Voice, Imagine, 3D Brain map and Discover from the previous app, on the same notes and account (More → Classic tools) |
 
-- **Brain AI** uses [Transformers.js](https://github.com/huggingface/transformers.js) with `Xenova/multilingual-e5-small` (Thai, English, French, Arabic) or `Xenova/all-MiniLM-L6-v2` (English) for search by meaning, similar notes, auto-organizing the inbox, summaries and semantic links in the Brain map. Text from photos uses [Tesseract.js](https://github.com/naptha/tesseract.js). Models download once and then work offline.
-- **Imagine** creates images with the open [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) model through Hugging Face, using a free Hugging Face key, or the free public FLUX Space when it has free time left.
+Knowledge Graph, Life Manager, Projects, Business HQ, Learning Hub, People, Calendar, Finance, Automations and Insights arrive in Phases 3–5 (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
+
+## AI
+
+All AI runs on the server in the Supabase edge function `nexora-ai`. No key is stored in the app.
+
+- **Reasoning:** Groq (OpenAI-compatible). The function picks the best available model from a preference list (`GROQ_MODELS` to override).
+- **Embeddings:** Supabase built-in `gte-small`, used for search by meaning and memory matching (pgvector, hybrid with full-text search).
+- **Speech-to-text:** Groq Whisper.
+- **Limits:** `AI_DAILY_LIMIT` requests per user per day (default 300), tracked in `ai_usage`.
+
+**Setup:** add the secret `GROQ_API_KEY` (free key from https://console.groq.com/keys) in Supabase → Edge Functions → Secrets.
+
+**Autonomy:** NEXORA files and tags automatically only if you turn that on, and each move can be undone. Memories are only kept once you approve them. It never sends, buys, shares, publishes or deletes anything without asking.
 
 ## AD Studio
 
-Home or Discover → **AD Studio**. Turns product photos into Thai advertising videos: product analysis, marketing strategy, storyboard, video, music, and MP4 export. It opens inside Second Brain, and ↗ opens it in the browser (best for saving videos on Android).
+More → Classic tools → **AD Studio** turns product photos into Thai ad videos: product analysis, marketing strategy, storyboard, video, music, and MP4 export. Source: [`ad-studio/`](ad-studio) (React + Vite). GitHub Actions builds it and publishes it at https://khalil203.github.io/second-brain/ad-studio/ with every push. Projects stay on the device. Server functions: [`ad-studio/supabase/functions`](ad-studio/supabase/functions).
 
-- Source code: [`ad-studio/`](ad-studio) (React + Vite). GitHub Actions builds it and publishes it at https://khalil203.github.io/second-brain/ad-studio/ with every push.
-- Projects are stored on the device, the same as in the old AI AD STUDIO app, so existing projects are still there.
-- Server functions for the AI features are in [`ad-studio/supabase/functions`](ad-studio/supabase/functions).
+## My Voice — Thai engine
 
-## Jarvis voice assistant
+For a closer Thai voice, make your own free Hugging Face Space from [`voice-engines/thai/`](voice-engines/thai) (F5-TTS-THAI by VIZINTZOR, CC-BY 4.0) and put its name in My Voice → Thai engine.
 
-Home → **Jarvis** (or Discover). Talk to your second brain: "add a task to call the customer tomorrow", "what's due today?", "search my notes for solar", "add to my journal…", "remember that…". It also checks the weather, searches the web, opens apps on the phone, sets reminders and runs your Make.com automations.
+## Cloud and privacy
 
-- Listening: Groq Whisper; answers: the best free Groq model (auto). Add a free key from https://console.groq.com/keys in Jarvis → ⚙️. The key stays on the phone and is never synced or backed up.
-- What Jarvis remembers is kept in the note **🧠 Jarvis memory** (Areas), so it syncs like any note.
-- The Android app needs version 1.4.0 or newer for the microphone and spoken replies.
+Supabase project `kshhznqxudcaipizpxvv` (Singapore). Every table has row-level security, so each account sees only its own rows. Files live in the private `brain` bucket under the user's own folder. There are daily backups (last 14 kept), export of everything, and permanent deletion. Private data is never used to train models. Schema: [supabase/migrations](supabase/migrations).
 
-## My Voice
+## Development
 
-Discover → **My Voice**. Record or upload about 10 seconds of your voice once (English and Thai are separate samples), type a script, and get an audio clip in your own voice for video voice-overs. Save it to a note, share it, or ask Jarvis: "say this in my voice: …".
+```bash
+cd web
+npm install
+npm run dev        # local dev server
+npm run build      # typecheck + build → ../app.html (one self-contained file)
+```
 
-- Runs on free Hugging Face Spaces: English uses the open-source [F5-TTS](https://github.com/SWivid/F5-TTS) (`mrfakename/E2-F5-TTS`), Thai uses [VachaSpeech](https://huggingface.co/spaces/VIZINTZOR/VachaSpeech) (`VIZINTZOR/VachaSpeech`, CPU, about 1–3 minutes per clip). Both are changeable in the tool. The sample and script are sent to those servers; they can be busy or out of free time.
-- **Closer Thai voice (recommended):** make your own free Space from [`voice-engines/thai/`](voice-engines/thai) (F5-TTS-THAI by VIZINTZOR, CC-BY 4.0, copies the voice more closely than VachaSpeech) and put its name in My Voice → Thai engine. Free CPU, no usage limit, about 1–2 minutes per sentence.
-- Voice samples stay on the phone and are not synced. Saved clips are normal notes (tag `#my-voice`).
-- Clone only your own voice.
+The source is React + TypeScript + Tailwind in `web/src`. The build inlines everything into `app.html` and stamps `APP_VERSION = 'x.y.z'`, which the loader and the self-updater look for.
 
-## Converter
+### Releasing a new version
 
-The Convert tool (Home → Convert, or Discover) changes files on the device: images (JPG, PNG, WEBP, PDF), PDF (JPG, PNG, TXT), video and audio via ffmpeg.wasm (MP4, MP3, GIF, WEBM, M4A, WAV, OGG), spreadsheets via SheetJS, Word via mammoth. The donut format picker is inspired by [Filee](https://github.com/KnifeLemon/Filee) (MIT, © Myeonggu Kim). The Windows desktop version, **Second Brain Convert** (200+ formats), is in [`convert-windows/`](convert-windows); download it from [Releases](https://github.com/khalil203/second-brain/releases).
-
-## Cloud
-
-Sign-in, sync and daily backups use a Supabase project (`kshhznqxudcaipizpxvv`, Singapore). Each account can only read its own notes and files (row-level security). The `web` edge function powers link previews and news feeds.
-
-## Updates
-
-The app checks GitHub for new versions and downloads them by itself (Settings → Updates). Tap **Restart** when it says an update is ready. Your notes are never touched by updates.
-
-## Releasing a new version
-
-1. Edit `app.html` and raise `APP_VERSION` (for example `3.0.0` → `3.1.0`).
-2. Put the same number in `version.json` → `"version"`.
+1. Raise `"version"` in `web/package.json` and the same number in `version.json`.
+2. `cd web && npm run build`.
 3. Commit and push to `main`. Phones pick it up through the update button.
 
-Only when the Android shell itself changes (new plugins, icon, app name): raise `apk_version` in `version.json` and in `index.html` (`SB_SHELL.apk`), and add `[apk]` to the commit message. GitHub Actions builds a new signed APK release.
+Only when the Android shell changes (plugins, icon, app name): raise `apk_version` in `version.json` and `SB_SHELL.apk` in `index.html`, and put `[apk]` in the commit message. GitHub Actions builds a signed APK.
 
 ## Files
 
-| File | What it is |
+| Path | What it is |
 |---|---|
-| `app.html` | The whole app |
+| `web/` | NEXORA source (React + TypeScript) |
+| `app.html` | Built app (generated — don't edit by hand) |
+| `classic.html` | The previous Second Brain 5.4 app, used by Classic tools |
+| `ad-studio/` | AD Studio source (built and published by GitHub Actions) |
+| `convert-windows/` | Second Brain Convert for Windows |
+| `voice-engines/` | Self-hostable voice engines for My Voice |
 | `index.html` | Loader that runs the newest downloaded version |
 | `version.json` | Latest version numbers, read by the update button |
-| `sw.js`, `manifest.webmanifest`, `icons/` | Offline support and install icons for the web app |
+| `supabase/` | Database migrations and the `nexora-ai` edge function |
+| `docs/ARCHITECTURE.md` | Architecture, schema, design system, roadmap |
+| `sw.js`, `manifest.webmanifest`, `icons/`, `assets/` | Web app offline support and icons |
 | `capacitor.config.json`, `.github/workflows/build.yml` | Android APK build |
 
-The APK signing key is `signing/release.p12` (new key since Android app 1.4.0, 11 Nov 2026; apps 1.3.0 and older must be uninstalled once before installing 1.4.0), locked with a long random password. To let GitHub build APKs, add that password as the repository secret `KEYSTORE_PASSWORD` (Settings → Secrets and variables → Actions). Keep the password private and saved somewhere safe — without it, future APKs can't install over the old one.
+The APK signing key is `signing/release.p12`, locked with the repository secret `KEYSTORE_PASSWORD`. Keep that password safe: without it, future APKs can't install over the old one.
+
+Converter format picker inspired by [Filee](https://github.com/KnifeLemon/Filee) (MIT, © Myeonggu Kim).
