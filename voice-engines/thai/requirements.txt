@@ -1,0 +1,3 @@
+f5-tts-th==1.0.9
+soundfile
+pandas<3
