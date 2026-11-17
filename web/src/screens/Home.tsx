@@ -4,7 +4,7 @@ import { useStore, db, nx, save, openTasks, today, addDays, inboxNotes, type Not
 import { go, openOverlay } from '../lib/nav';
 import { Cloud, AI, AIError, displayUser } from '../lib/cloud';
 import { greeting, ago, TYPES, snippet } from '../lib/format';
-import { Section, Spinner, Logo } from '../components/ui';
+import { Section, Spinner, Logo, Stat } from '../components/ui';
 import { TaskRow } from './Tasks';
 
 export default function Home() {
@@ -41,26 +41,36 @@ export default function Home() {
   const dateStr = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 lg:px-8 pb-32 lg:pb-12 anim-in">
-      <header className="safe-t pt-5 flex items-center gap-3">
-        <div className="lg:hidden"><Logo size={34} /></div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[13px] text-muted">{dateStr}</p>
-          <h1 className="text-[24px] sm:text-[28px] leading-tight font-bold tracking-tight">{greeting()}{nx.name ? `, ${nx.name}` : ''}</h1>
+    <div className="mx-auto w-full max-w-3xl px-4 sm:px-5 lg:px-8 pb-32 lg:pb-12 anim-in">
+      <header className="safe-t pt-5 sm:pt-6">
+        <div className="card grad-border overflow-hidden p-4 sm:p-5">
+          <div className="flex items-start gap-3">
+            <div className="lg:hidden pt-0.5"><Logo size={36} /></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[12px] font-semibold uppercase tracking-[.14em] text-muted">{dateStr}</p>
+              <h1 className="h1 mt-1">{greeting()}{nx.name ? `, ${nx.name}` : ''}</h1>
+              <p className="text-[14px] text-muted mt-1.5 leading-relaxed">Your second brain, organized and ready. Capture, ask, and act from one place.</p>
+            </div>
+            <button onClick={() => go({ name: 'settings' })} className="relative w-11 h-11 rounded-2xl grad text-white font-semibold shadow-glow shrink-0" aria-label="Account">
+              {(nx.name || displayUser(Cloud.user()?.email) || 'N')[0].toUpperCase()}
+              <span className={`absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ring-2 ring-surface ${!signedIn ? 'bg-muted' : Cloud.state === 'err' ? 'bg-bad' : Cloud.state === 'busy' ? 'bg-warn' : 'bg-ok'}`} />
+            </button>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3 stagger">
+            <Stat icon={<CheckSquare size={15} />} value={openTasks().length} label="Open tasks" />
+            <Stat icon={<InboxI size={15} />} value={inbox.length} label="Inbox" />
+            <Stat icon={<Pin size={15} />} value={pinned.length} label="Pinned" />
+          </div>
         </div>
-        <button onClick={() => go({ name: 'settings' })} className="relative w-10 h-10 rounded-full grad text-white font-semibold" aria-label="Account">
-          {(nx.name || displayUser(Cloud.user()?.email) || 'N')[0].toUpperCase()}
-          <span className={`absolute -right-0.5 -bottom-0.5 w-3 h-3 rounded-full ring-2 ring-bg ${!signedIn ? 'bg-muted' : Cloud.state === 'err' ? 'bg-bad' : Cloud.state === 'busy' ? 'bg-warn' : 'bg-ok'}`} />
-        </button>
       </header>
 
       {/* Ask */}
-      <form className="mt-5 card p-2 flex items-center gap-2" onSubmit={(e) => { e.preventDefault(); submit(); }}>
-        <div className="w-10 h-10 rounded-xl grad flex items-center justify-center text-white shrink-0"><Brain size={20} /></div>
-        <input value={ask} onChange={(e) => setAsk(e.target.value)} placeholder="Ask your brain anything…" className="flex-1 bg-transparent outline-none text-[15px] h-10 min-w-0" />
-        <button className="icon-btn text-primary disabled:opacity-30" disabled={!ask.trim()} aria-label="Ask"><ArrowUp size={20} /></button>
+      <form className="mt-5 card p-2 sm:p-2.5 flex items-center gap-2 shadow-card" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+        <div className="w-11 h-11 rounded-xl grad flex items-center justify-center text-white shrink-0 shadow-glow"><Brain size={20} /></div>
+        <input value={ask} onChange={(e) => setAsk(e.target.value)} placeholder="Ask your brain anything…" className="flex-1 bg-transparent outline-none text-[15px] h-10 min-w-0 placeholder:text-muted/70" />
+        <button className="icon-btn text-primary disabled:opacity-30 hover:bg-primary/10" disabled={!ask.trim()} aria-label="Ask"><ArrowUp size={20} /></button>
       </form>
-      <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">
+      <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-0.5">
         <QuickBtn icon={StickyNote} label="Note" onClick={() => openOverlay({ name: 'capture', preset: { type: 'note' } })} />
         <QuickBtn icon={CheckSquare} label="Task" onClick={() => openOverlay({ name: 'capture', preset: { type: 'task', due: t } })} />
         <QuickBtn icon={Mic} label="Voice" onClick={() => openOverlay({ name: 'capture', preset: { mode: 'voice' } })} />
@@ -151,24 +161,24 @@ export default function Home() {
 }
 
 function QuickBtn({ icon: Icon, label, onClick }: { icon: typeof Mic; label: string; onClick: () => void }) {
-  return <button onClick={onClick} className="chip h-9 px-3.5 bg-surface border hair text-ink"><Icon size={15} className="text-primary" />{label}</button>;
+  return <button onClick={onClick} className="chip h-10 px-4 bg-surface/70 border hair text-ink hover:border-primary/30 hover:text-primary tap"><Icon size={15} className="text-primary" />{label}</button>;
 }
 function MiniCard({ n, pin }: { n: Note; pin?: boolean }) {
   return (
-    <button onClick={() => go({ name: 'note', id: n.id })} className="card p-3.5 text-left h-28 flex flex-col">
+    <button onClick={() => go({ name: 'note', id: n.id })} className="card card-hover tap p-3.5 text-left h-32 flex flex-col">
       <div className="flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: TYPES[n.type]?.color }}>{pin && <Pin size={11} />}{TYPES[n.type]?.label}</div>
-      <div className="font-semibold text-[14px] mt-1 line-clamp-2">{n.title || 'Untitled'}</div>
+      <div className="font-semibold text-[14px] mt-1 line-clamp-2 leading-snug">{n.title || 'Untitled'}</div>
       <div className="text-[12px] text-muted mt-auto line-clamp-1">{snippet(n, 60)}</div>
     </button>
   );
 }
 export function NoteRow({ n, right }: { n: Note; right?: React.ReactNode }) {
   return (
-    <button onClick={() => go({ name: 'note', id: n.id })} className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-raised/50 first:rounded-t-xl2 last:rounded-b-xl2">
-      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: TYPES[n.type]?.color }} />
+    <button onClick={() => go({ name: 'note', id: n.id })} className="w-full text-left px-4 py-3.5 flex items-center gap-3 hover:bg-raised/50 transition first:rounded-t-xl2 last:rounded-b-xl2 tap">
+      <span className="w-2.5 h-2.5 rounded-full shrink-0 ring-4 ring-primary/10" style={{ background: TYPES[n.type]?.color }} />
       <div className="min-w-0 flex-1">
         <div className="font-medium text-[15px] truncate">{n.title || snippet(n, 50) || 'Untitled'}</div>
-        <div className="text-[12px] text-muted truncate">{TYPES[n.type]?.label} · {ago(n.updated)}{snippet(n, 80) && n.title ? ` · ${snippet(n, 80)}` : ''}</div>
+        <div className="text-[12px] text-muted truncate mt-0.5">{TYPES[n.type]?.label} · {ago(n.updated)}{snippet(n, 80) && n.title ? ` · ${snippet(n, 80)}` : ''}</div>
       </div>
       {right}
     </button>

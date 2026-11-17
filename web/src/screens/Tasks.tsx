@@ -11,14 +11,14 @@ export function TaskRow({ n }: { n: Note }) {
   const t = today();
   const late = !n.done && n.due && n.due < t;
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-3 px-4 py-3.5 hover:bg-raised/40 transition first:rounded-t-xl2 last:rounded-b-xl2">
       <button aria-label={n.done ? 'Mark not done' : 'Mark done'} onClick={() => updateNote(n.id, { done: !n.done, doneAt: n.done ? undefined : Date.now() })}
-        className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${n.done ? 'grad border-transparent text-white' : 'border-muted/50 hover:border-primary'}`}>
+        className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition ${n.done ? 'grad border-transparent text-white shadow-glow' : 'border-muted/40 hover:border-primary hover:bg-primary/5'}`}>
         {n.done && <Check size={14} strokeWidth={3} />}
       </button>
-      <button className="flex-1 min-w-0 text-left" onClick={() => go({ name: 'note', id: n.id })}>
-        <div className={`text-[15px] truncate ${n.done ? 'line-through text-muted' : ''}`}>{n.title || 'Untitled task'}</div>
-        {n.due && <div className={`text-[12px] flex items-center gap-1 ${late ? 'text-bad' : 'text-muted'}`}><CalendarDays size={12} />{dueLabel(n.due, t, addDays(1), addDays(-1))}{late ? ' · overdue' : ''}</div>}
+      <button className="flex-1 min-w-0 text-left tap" onClick={() => go({ name: 'note', id: n.id })}>
+        <div className={`text-[15px] truncate ${n.done ? 'line-through text-muted' : 'font-medium'}`}>{n.title || 'Untitled task'}</div>
+        {n.due && <div className={`text-[12px] flex items-center gap-1 mt-0.5 ${late ? 'text-bad' : 'text-muted'}`}><CalendarDays size={12} />{dueLabel(n.due, t, addDays(1), addDays(-1))}{late ? ' · overdue' : ''}</div>}
       </button>
     </div>
   );
@@ -50,11 +50,11 @@ export default function Tasks() {
     <Page title="Tasks" sub={`${lists.today.length} for today · ${open.length} open`}>
       <Seg value={view} onChange={setView} options={[['today', `Today ${lists.today.length || ''}`], ['upcoming', 'Upcoming'], ['anytime', 'Anytime'], ['done', 'Done']]} />
       {view !== 'done' && (
-        <form onSubmit={add} className="mt-4 card p-2 flex items-center gap-2">
-          <Plus size={20} className="text-primary ml-2 shrink-0" />
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add a task…" className="flex-1 bg-transparent outline-none h-10 min-w-0 text-[15px]" />
-          {view !== 'anytime' && <input type="date" value={due} onChange={(e) => setDue(e.target.value)} className="bg-raised rounded-lg h-9 px-2 text-[13px] outline-none" aria-label="Due date" />}
-          <button className="btn-primary btn-sm" disabled={!title.trim()}>Add</button>
+        <form onSubmit={add} className="mt-4 card p-2 sm:p-2.5 flex items-center gap-2 shadow-card">
+          <div className="w-10 h-10 rounded-xl bg-primary/12 text-primary flex items-center justify-center shrink-0"><Plus size={20} /></div>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add a task…" className="flex-1 bg-transparent outline-none h-10 min-w-0 text-[15px] placeholder:text-muted/70" />
+          {view !== 'anytime' && <input type="date" value={due} onChange={(e) => setDue(e.target.value)} className="bg-raised border hair rounded-lg h-9 px-2 text-[13px] outline-none" aria-label="Due date" />}
+          <button className="btn-primary btn-sm h-10 px-4" disabled={!title.trim()}>Add</button>
         </form>
       )}
       <div className="mt-4">

@@ -4,7 +4,7 @@ import { useStore, nx, save, newNote, byId, toast } from '../lib/store';
 import { go, openOverlay } from '../lib/nav';
 import { Cloud, AI } from '../lib/cloud';
 import { md, ago } from '../lib/format';
-import { Page, Empty, Sheet, Thinking, Spinner, Logo } from '../components/ui';
+import { Page, Empty, Sheet, Thinking, Spinner } from '../components/ui';
 
 type Cite = { n: number; type: 'note' | 'memory' | 'message'; id: string; title: string; excerpt: string; status?: string };
 type Msg = { id?: string; role: 'user' | 'assistant'; content: string; citations?: Cite[]; sources?: Cite[]; streaming?: boolean; error?: string };
@@ -137,36 +137,40 @@ export default function BrainScreen({ conv: conv0, ask }: { conv?: string; ask?:
 
   return (
     <div className="flex h-[100dvh] lg:h-screen">
-      <aside className="hidden xl:block w-72 shrink-0 border-r hair p-3 overflow-y-auto">{HistList}</aside>
+      <aside className="hidden xl:block w-72 shrink-0 border-r hair p-3 overflow-y-auto glass-strong">{HistList}</aside>
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="safe-t px-4 lg:px-8 pt-3 pb-2 flex items-center gap-2 border-b hair bg-bg/80 backdrop-blur-xl">
-          <div className="flex-1 min-w-0"><h1 className="h2 flex items-center gap-2"><BrainI size={18} className="text-primary" /> AI Brain</h1>
-            <p className="text-[12px] text-muted truncate">{AI.status && !AI.status.ai ? 'AI is not configured on the server yet' : 'Answers from your notes and memories, with sources'}</p></div>
+        <header className="safe-t px-4 lg:px-8 pt-3 pb-3 flex items-center gap-2 border-b hair glass-strong">
+          <div className="flex-1 min-w-0"><h1 className="h2 flex items-center gap-2"><span className="w-8 h-8 rounded-xl grad text-white flex items-center justify-center shadow-glow"><BrainI size={16} /></span> AI Brain</h1>
+            <p className="text-[12px] text-muted truncate mt-0.5">{AI.status && !AI.status.ai ? 'AI is not configured on the server yet' : 'Answers from your notes and memories, with sources'}</p></div>
           <button className="icon-btn xl:hidden" onClick={() => { setHist((h) => ({ ...h, open: true })); loadHist(); }} aria-label="History"><History size={20} /></button>
           <button className="icon-btn" onClick={newChat} aria-label="New conversation"><Plus size={20} /></button>
         </header>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-3xl px-4 lg:px-8 py-4 space-y-5 pb-44 lg:pb-32">
+          <div className="mx-auto max-w-3xl px-4 lg:px-8 py-5 space-y-5 pb-44 lg:pb-32">
             {loading && <div className="flex justify-center py-10 text-muted"><Spinner size={22} /></div>}
             {!loading && !msgs.length && (
-              <div className="pt-6 lg:pt-12 anim-in">
-                <div className="flex flex-col items-center text-center"><Logo size={56} /><h2 className="mt-4 text-[22px] font-bold">What's on your mind?</h2><p className="text-muted text-[14px] mt-1 max-w-sm">I answer from what you've captured, and say so when I don't know.</p></div>
-                <div className="mt-6 grid sm:grid-cols-2 gap-2">{PROMPTS.map((p) => <button key={p} onClick={() => send(p)} className="card px-4 py-3 text-left text-[14px] hover:border-primary/40 flex items-center gap-2"><Sparkles size={14} className="text-violet shrink-0" />{p}</button>)}</div>
+              <div className="pt-6 lg:pt-14 anim-in">
+                <div className="card grad-border p-6 sm:p-8 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 rounded-2xl grad text-white flex items-center justify-center shadow-glow mb-3"><BrainI size={30} /></div>
+                  <h2 className="text-[24px] font-bold tracking-tight">What's on your mind?</h2>
+                  <p className="text-muted text-[14px] mt-2 max-w-sm leading-relaxed">I answer from what you've captured, and say so when I don't know. Every answer can cite its sources.</p>
+                </div>
+                <div className="mt-5 grid sm:grid-cols-2 gap-2.5 stagger">{PROMPTS.map((p) => <button key={p} onClick={() => send(p)} className="card card-hover tap px-4 py-3.5 text-left text-[14px] flex items-center gap-2.5"><span className="w-8 h-8 rounded-lg bg-violet/15 text-violet flex items-center justify-center shrink-0"><Sparkles size={14} /></span><span>{p}</span></button>)}</div>
               </div>
             )}
             {msgs.map((m, i) => m.role === 'user' ? (
-              <div key={i} className="flex justify-end anim-in"><div className="max-w-[85%] rounded-2xl rounded-br-md grad text-white px-4 py-2.5 text-[15px] whitespace-pre-wrap">{m.content}</div></div>
+              <div key={i} className="flex justify-end anim-in"><div className="max-w-[85%] rounded-2xl rounded-br-md grad text-white px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap shadow-glow">{m.content}</div></div>
             ) : (
               <div key={i} className="anim-in">
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-xl grad shrink-0 flex items-center justify-center text-white mt-0.5"><BrainI size={16} /></div>
-                  <div className="flex-1 min-w-0">
-                    {m.content ? <div className="prose-nx" onClick={(e) => onMsgClick(e, m)} dangerouslySetInnerHTML={{ __html: md(m.content, { cites: true }) }} /> : m.streaming && <div className="pt-2"><Thinking /></div>}
-                    {m.error && <div className="mt-2 rounded-xl bg-bad/10 text-bad text-[14px] px-3 py-2">{m.error}</div>}
+                  <div className="w-9 h-9 rounded-xl grad shrink-0 flex items-center justify-center text-white mt-0.5 shadow-glow"><BrainI size={17} /></div>
+                  <div className="flex-1 min-w-0 card px-4 py-3.5">
+                    {m.content ? <div className="prose-nx" onClick={(e) => onMsgClick(e, m)} dangerouslySetInnerHTML={{ __html: md(m.content, { cites: true }) }} /> : m.streaming && <div className="pt-1"><Thinking /></div>}
+                    {m.error && <div className="mt-2 rounded-xl bg-bad/10 text-bad text-[14px] px-3 py-2 border border-bad/20">{m.error}</div>}
                     {!m.streaming && (m.citations?.length ?? 0) > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1.5">{m.citations!.map((c) => (
-                        <button key={c.n} onClick={() => openCite(c)} title={c.excerpt} className="pill bg-raised text-ink h-7 px-2.5 max-w-[240px]">
+                      <div className="mt-3 pt-3 border-t hair flex flex-wrap gap-1.5">{m.citations!.map((c) => (
+                        <button key={c.n} onClick={() => openCite(c)} title={c.excerpt} className="pill bg-raised text-ink h-7 px-2.5 max-w-[240px] hover:border-primary/30 border hair">
                           <span className="text-primary font-bold">{c.n}</span>{c.type === 'memory' ? <Sparkles size={11} className="text-violet" /> : c.type === 'message' ? <MessageSquare size={11} /> : <FileText size={11} />}<span className="truncate">{c.title}</span>{c.status === 'suggested' && <span className="text-warn">· unconfirmed</span>}
                         </button>))}</div>
                     )}
@@ -185,13 +189,13 @@ export default function BrainScreen({ conv: conv0, ask }: { conv?: string; ask?:
           </div>
         </div>
 
-        <div className="fixed lg:sticky bottom-16 lg:bottom-0 inset-x-0 lg:inset-x-auto px-3 lg:px-8 pb-3 pt-2 bg-gradient-to-t from-bg via-bg/95 to-transparent">
-          <form className="mx-auto max-w-3xl card p-1.5 flex items-end gap-1" onSubmit={(e) => { e.preventDefault(); send(); }}>
-            <button type="button" className={`icon-btn ${rec === 'on' ? 'text-bad' : ''}`} onClick={toggleRec} disabled={rec === 'busy'} aria-label="Voice">{rec === 'busy' ? <Spinner /> : rec === 'on' ? <Square size={18} fill="currentColor" /> : <Mic size={20} />}</button>
+        <div className="fixed lg:sticky bottom-16 lg:bottom-0 inset-x-0 lg:inset-x-auto px-3 lg:px-8 pb-3 pt-3 bg-gradient-to-t from-bg via-bg/96 to-transparent">
+          <form className="mx-auto max-w-3xl card p-1.5 flex items-end gap-1 shadow-card" onSubmit={(e) => { e.preventDefault(); send(); }}>
+            <button type="button" className={`icon-btn ${rec === 'on' ? 'text-bad bg-bad/10' : ''}`} onClick={toggleRec} disabled={rec === 'busy'} aria-label="Voice">{rec === 'busy' ? <Spinner /> : rec === 'on' ? <Square size={18} fill="currentColor" /> : <Mic size={20} />}</button>
             <textarea value={input} onChange={(e) => setInput(e.target.value)} rows={1} placeholder={rec === 'on' ? 'Listening… tap stop when done' : 'Ask anything about your life, work or ideas…'}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !('ontouchstart' in window)) { e.preventDefault(); send(); } }}
               className="flex-1 bg-transparent outline-none resize-none py-2.5 text-[15px] max-h-40" style={{ fieldSizing: 'content' } as React.CSSProperties} />
-            <button className="w-10 h-10 rounded-xl grad text-white flex items-center justify-center disabled:opacity-40 shrink-0" disabled={!input.trim() || busy} aria-label="Send">{busy ? <Spinner /> : <ArrowUp size={20} />}</button>
+            <button className="w-11 h-11 rounded-xl grad text-white flex items-center justify-center disabled:opacity-40 shrink-0 shadow-glow" disabled={!input.trim() || busy} aria-label="Send">{busy ? <Spinner /> : <ArrowUp size={20} />}</button>
           </form>
         </div>
       </div>
