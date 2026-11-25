@@ -534,6 +534,7 @@ input[type=range]{padding:0;border:0;box-shadow:none;accent-color:var(--acc);bac
   <div class="sh-top"><button class="ib flat" data-act="closeVoice" aria-label="Back">←</button><b>My Voice</b><span style="width:42px"></span></div>
   <div class="sh-body" id="voiceBody"></div>
   <input type="file" id="voicePick" hidden>
+  <input type="file" id="voiceAdd" accept="audio/*,video/mp4,.wav,.mp3,.m4a,.aac,.ogg,.opus,.flac" hidden>
 </div>
 <!-- brain map -->
 <div class="sheet" id="map">
@@ -2318,9 +2319,10 @@ async function imgSave(){
 
 /* ---------- My Voice: voice-overs in your own cloned voice (open voice models on free Hugging Face Spaces: F5-TTS for English, VachaSpeech for Thai) ---------- */
 const Voice = (() => {
-  const DEF = {spaceEn:'mrfakename/E2-F5-TTS', spaceTh:'VIZINTZOR/VachaSpeech', hq:true, useKey:false, speed:1, gender:'male', en:null, th:null};
+  const DEF = {engine:'vs', spaceEn:'mrfakename/E2-F5-TTS', spaceTh:'VIZINTZOR/VachaSpeech', hq:true, useKey:false, speed:1, gender:'male', en:null, th:null};
   let C = Object.assign({}, DEF, (() => { try{ return JSON.parse(localStorage.getItem('sb.voice') || '{}'); }catch(e){ return {}; } })());
-  if(C.spaceTh==='pythonlearnreal/F5-TTS-THAI') C.spaceTh = DEF.spaceTh;   /* 5.3.0's Thai engine only offers multi-speaker mode */
+  if(C.spaceTh==='pythonlearnreal/F5-TTS-THAI') C.spaceTh = DEF.spaceTh;
+  if(!C.engine) C.engine = 'vs';   /* 5.5: VoiceStudio on the phone is the default; free online servers stay available */   /* 5.3.0's Thai engine only offers multi-speaker mode */
   const saveC = () => { try{ localStorage.setItem('sb.voice', JSON.stringify(C)); }catch(e){} };
   const PROMPTS = {en:'Hello, my name is Linko. I make videos about life, style and business in Thailand, and this is how my voice really sounds.',
     th:'สวัสดีครับ ผมชื่อลิงโกะ ผมทำวิดีโอเกี่ยวกับชีวิตและธุรกิจในประเทศไทย และนี่คือเสียงของผมครับ'};
@@ -2451,6 +2453,25 @@ const Voice = (() => {
     changed(n); return n;
   }
 
+  /* VoiceStudio (sh.voicestudio.mobile): makes the clip on the phone, offline, no daily limit.
+     Its speech API stops when you leave its screen, so NEXORA hands the script over with its deep link
+     and you bring the finished clip back with "Add the finished clip". */
+  const VS_RELEASES = 'https://github.com/debpalash/VoiceStudio/releases/latest';
+  function openVS(text){
+    const t = String(text || '').slice(0, 20000);
+    try{ navigator.clipboard && navigator.clipboard.writeText(t).catch(() => {}); }catch(e){}
+    const u = 'voicestudio://workspace/speak' + (t ? '?text=' + encodeURIComponent(t) : '');
+    try{ (window.top || window).location.href = u; }catch(e){ location.href = u; }
+  }
+  async function addFinished(file){
+    if(!file) return;
+    if(!/^audio\/|^video\//.test(file.type || '') && !/\.(wav|mp3|m4a|aac|ogg|opus|flac|m4b)$/i.test(file.name)){ toast('Pick the audio file VoiceStudio made'); return; }
+    const text = (($('#vText') || {}).value || S.text || '').trim();
+    const n = newNote({title:'🗣️ ' + (text ? text.replace(/\s+/g, ' ').slice(0, 70) : file.name), body:`${text || '(script not added)'}\n\n${LANG[S.gl]} · my cloned voice · VoiceStudio\n\n#my-voice`, type:'note', para:'resources'});
+    try{ n.files.push(await addFile(file)); }catch(e){ toast(e.message); }
+    changed(n); haptic('success'); toast('Clip saved to Resources', 'Open', () => openNote(n.id)); render();
+  }
+
   /* screen */
   const el = () => $('#voiceBody');
   const setStatus = t => { const s = $('#vStatus'); if(s) s.textContent = t; };
@@ -2460,7 +2481,25 @@ const Voice = (() => {
     const e = el(); if(!e) return; freeUrls();
     const has = !!C[S.sl], rec = !!S.rec, clips = db.notes.filter(n => tagsOf(n).includes('my-voice') && (n.files||[]).length).sort((a,b) => b.created - a.created).slice(0, 12);
     const seg = (k, cur) => `<div class="seg">${['en','th'].map(l => `<button class="${cur===l?'on':''}" data-v="${k}" data-l="${l}">${LANG[l]}${k==='sl' && C[l] ? ' ✓' : ''}</button>`).join('')}</div>`;
-    let h = `<div class="optlabel">1 · Your voice sample</div>${seg('sl', S.sl)}`;
+    const engSeg = `<div class="optlabel">Voice engine</div><div class="seg"><button class="${C.engine==='vs'?'on':''}" data-v="engine" data-l="vs">VoiceStudio · no limits</button><button class="${C.engine!=='vs'?'on':''}" data-v="engine" data-l="hf">Free online servers</button></div>`;
+    if(C.engine==='vs'){
+      let v = engSeg + `<div class="panel" style="margin-top:10px"><p style="margin:0 0 6px"><b>VoiceStudio</b> makes your voice right on this phone: offline, free, no daily limit, English and Thai.</p>
+        <details ${C.vsReady ? '' : 'open'}><summary class="small" style="cursor:pointer">One-time setup</summary><ol class="small" style="margin:8px 0 0;padding-left:18px;line-height:1.6">
+        <li>Install VoiceStudio for Android (the file ending in <b>-android.apk</b>): <a href="${VS_RELEASES}" target="_blank" rel="noopener">download page</a>.</li>
+        <li>Open it → <b>Models</b> → download <b>OmniVoice</b> (on Wi-Fi).</li>
+        <li><b>Voices</b> → clone your voice: record about 10 seconds, then save.</li>
+        <li>In <b>Speak</b>, pick your cloned voice. It stays selected for next time.</li></ol>
+        <button class="btn g" style="margin-top:8px" data-v="vsReady">${C.vsReady ? 'Setup done ✓' : 'I have done this'}</button></details></div>
+        <div class="optlabel">Script</div>${seg('gl', S.gl)}
+        <textarea id="vText" rows="6" style="margin-top:10px" placeholder="Type or paste what your voice should say…">${esc(S.text)}</textarea>
+        <button class="btn grad wide" style="margin-top:14px" data-v="vsGo">🎙️ Make it in VoiceStudio</button>
+        <p class="small" style="margin:8px 0 0">VoiceStudio opens on Speak with this script. Tap generate, then save or share the audio. The script is also copied, in case you need to paste it.</p>
+        <button class="btn g wide" style="margin-top:12px" data-v="vsAdd">📎 Add the finished clip</button>
+        <p class="small" style="margin:6px 0 0">Pick the file VoiceStudio made. It is saved as a note with your script, under Resources.</p>`;
+      if(clips.length) v += `<div class="sec"><h2>Your clips</h2></div>` + clips.map(n => `<div class="panel" style="margin-bottom:8px"><p style="margin:0 0 8px" data-open="${n.id}">${esc(n.title)}</p><audio data-file="${n.files[0]}" controls preload="none" style="width:100%"></audio></div>`).join('');
+      e.innerHTML = v; hydrate(e); return;
+    }
+    let h = engSeg + `<div class="optlabel">1 · Your voice sample</div>${seg('sl', S.sl)}`;
     if(has && !rec) h += `<audio id="vSample" controls style="width:100%;margin-top:10px"></audio>
       <input id="vRef" type="text" style="margin-top:8px" placeholder="What the sample says (leave empty if unsure)" value="${esc(C[S.sl].text || '')}" autocomplete="off">
       <div class="row" style="margin-top:8px"><button class="btn g" style="flex:1" data-v="rec">● Record again</button><button class="btn g" style="flex:1" data-v="pick">Upload</button><button class="ib" data-v="del" aria-label="Delete sample">🗑</button></div>`;
@@ -2515,6 +2554,10 @@ const Voice = (() => {
   function click(e){
     const b = e.target.closest('[data-v]'); if(!b) return; const a = b.dataset.v;
     if(a==='sl' || a==='gl'){ S.text = ($('#vText') || {}).value ?? S.text; S[a] = b.dataset.l; render(); }
+    else if(a==='engine'){ S.text = ($('#vText') || {}).value ?? S.text; C.engine = b.dataset.l; saveC(); render(); if(C.engine!=='vs') warm(); }
+    else if(a==='vsReady'){ C.vsReady = !C.vsReady; saveC(); render(); }
+    else if(a==='vsGo'){ const t = (($('#vText') || {}).value || '').trim(); S.text = t; if(!t){ toast('Type a script first'); return; } haptic('light'); openVS(t); }
+    else if(a==='vsAdd'){ S.text = ($('#vText') || {}).value ?? S.text; $('#voiceAdd').click(); }
     else if(a==='rec') record();
     else if(a==='pick') $('#voicePick').click();
     else if(a==='del'){ if(confirm('Delete this voice sample?')){ Store.delFile(sid(S.sl)); C[S.sl] = null; saveC(); render(); } }
@@ -2525,6 +2568,7 @@ const Voice = (() => {
   function change(e){
     const t = e.target;
     if(t.id==='voicePick'){ const f = t.files[0]; t.value = ''; if(f) setSample(f, ''); }
+    else if(t.id==='voiceAdd'){ const f = t.files[0]; t.value = ''; addFinished(f); }
     else if(t.id==='vRef'){ if(C[S.sl]){ C[S.sl].text = t.value.trim(); saveC(); } }
     else if(t.id==='vSpaceEn' || t.id==='vSpaceTh'){ const k = t.id==='vSpaceEn' ? 'spaceEn' : 'spaceTh'; C[k] = t.value.trim() || DEF[k]; t.value = C[k]; saveC(); warm(); }
     else if(t.id==='vGender'){ C.gender = t.value; saveC(); }
@@ -2539,12 +2583,13 @@ const Voice = (() => {
   /* hide the speed slider when the chosen engine cannot change speed; look the engines up in the background */
   function syncSpeed(){ const w = $('#vSpeedWrap'); if(!w) return; const pl = plans[baseOf(S.gl==='th' ? C.spaceTh : C.spaceEn)]; w.hidden = !!pl && !pl.speed; }
   function warm(){ if(navigator.onLine) for(const sp of [C.spaceEn, C.spaceTh]) planOf(baseOf(sp)).then(syncSpeed).catch(() => {}); }
-  function open(){ render(); openSheet('voice'); warm(); }
+  function open(){ render(); openSheet('voice'); if(C.engine!=='vs') warm(); }
   function closed(){ stopRec(); document.querySelectorAll('#voiceBody audio').forEach(a => a.pause()); }
   function init(){ const s = $('#voice'); if(!s) return; s.addEventListener('click', click); s.addEventListener('change', change); s.addEventListener('input', input); }
   /* for Jarvis: start a clip in the background and save it as a note when it is ready */
   function fromJarvis(text, lang){
     text = String(text || '').trim(); if(!text) return 'no text given';
+    if(C.engine==='vs'){ S.text = text; openVS(text); return 'Opened VoiceStudio on Speak with the script. Tell him to tap generate there, then use "Add the finished clip" in My Voice to save it.'; }
     if(!C.en && !C.th) return 'There is no voice sample yet. Tell him to open My Voice in Discover and add a sample first.';
     if(S.busy) return 'A voice clip is already being made. Ask again when it is finished.';
     lang = lang==='th' || lang==='en' ? lang : (isThai(text) ? 'th' : 'en'); S.busy = true; S.err = ''; S.text = text; S.gl = lang;

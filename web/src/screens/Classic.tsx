@@ -10,11 +10,18 @@ import { Spinner } from '../components/ui';
 import { CLASSIC } from './More';
 
 async function classicHtml(): Promise<string> {
+  // Newest first, so fixes to the classic tools reach the Android app without a new APK:
+  // GitHub (online) → last copy kept on this device → the copy bundled with the app.
   const ok = (h: string) => h.includes("APP_VERSION = '5.") && h.includes('Second Brain');
-  try { const r = await fetch('classic.html', { cache: 'no-cache' }); if (r.ok) { const h = await r.text(); if (ok(h)) return h; } } catch { /* try GitHub */ }
-  const cached = localStorage.getItem('nx.classic');
-  try { const r = await fetch(RAW + 'classic.html?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { const h = await r.text(); if (ok(h)) { try { localStorage.setItem('nx.classic', h); } catch { /* quota */ } return h; } } } catch { /* offline */ }
-  if (cached) return cached;
+  if (navigator.onLine) {
+    try {
+      const c = new AbortController(); const t = setTimeout(() => c.abort(), 6000);
+      const r = await fetch(RAW + 'classic.html?t=' + Date.now(), { cache: 'no-store', signal: c.signal }); clearTimeout(t);
+      if (r.ok) { const h = await r.text(); if (ok(h)) { try { localStorage.setItem('nx.classic', h); } catch { /* quota */ } return h; } }
+    } catch { /* slow or offline: fall back */ }
+  }
+  const cached = localStorage.getItem('nx.classic'); if (cached && ok(cached)) return cached;
+  try { const r = await fetch('classic.html', { cache: 'no-cache' }); if (r.ok) { const h = await r.text(); if (ok(h)) return h; } } catch { /* none bundled */ }
   throw new Error('Classic tools need an internet connection the first time.');
 }
 
