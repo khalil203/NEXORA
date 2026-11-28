@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Home as HomeI, Brain, Plus, CheckSquare, LayoutGrid, Sparkles, Inbox as InboxI, Library, Network, CalendarCheck, FolderKanban, Briefcase, GraduationCap, Users, Calendar, Wallet, Workflow, LineChart, Settings as SettingsI, WandSparkles, type LucideIcon } from 'lucide-react';
+import { Home as HomeI, Brain, Plus, CheckSquare, LayoutGrid, Sparkles, Inbox as InboxI, Library, Network, CalendarCheck, FolderKanban, Briefcase, GraduationCap, Users, Calendar, Wallet, Workflow, LineChart, Settings as SettingsI, WandSparkles, Clapperboard, type LucideIcon } from 'lucide-react';
 import { useStore, nx, db, inboxNotes } from './lib/store';
 import { nav, route, go, openOverlay, type Route } from './lib/nav';
 import { Cloud, displayUser } from './lib/cloud';
@@ -20,6 +20,7 @@ import Welcome from './screens/Welcome';
 import Lock from './screens/Lock';
 import { lock } from './lib/biometric';
 import Forge from './screens/Forge';
+import Studio from './screens/Studio';
 
 export interface Module { key: string; label: string; icon: LucideIcon; route?: Route; phase?: number }
 export const MODULES: Module[] = [
@@ -30,6 +31,7 @@ export const MODULES: Module[] = [
   { key: 'vault', label: 'Knowledge Vault', icon: Library, route: { name: 'vault' } },
   { key: 'tasks', label: 'Tasks', icon: CheckSquare, route: { name: 'tasks' } },
   { key: 'forge', label: 'Prompt Forge', icon: WandSparkles, route: { name: 'forge' } },
+  { key: 'studio', label: 'Studio', icon: Clapperboard, route: { name: 'studio' } },
   { key: 'graph', label: 'Knowledge Graph', icon: Network, phase: 5 },
   { key: 'life', label: 'Life Manager', icon: CalendarCheck, phase: 3 },
   { key: 'projects', label: 'Projects', icon: FolderKanban, phase: 3 },
@@ -69,6 +71,7 @@ export default function App() {
     case 'memories': screen = <Memories focus={r.focus} />; break;
     case 'settings': case 'account': screen = <Settings />; break;
     case 'forge': screen = <Forge />; break;
+    case 'studio': screen = <Studio />; break;
   }
 
   return (
